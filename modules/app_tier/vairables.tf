@@ -2,9 +2,7 @@ variable "vpc_id" {
   description = "the vpc to launch the resource to"
 }
 
-variable "name" {
-  description = "The name of the user"
-}
+
 
 variable "user_data" {
   description = "the user data to provision the instance"
@@ -24,6 +22,7 @@ variable "availability_zone" {
 }
 variable "name" {
   default="Eng14app"
+  description = "The name of the user"
 }
 
 
