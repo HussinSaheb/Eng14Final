@@ -22,3 +22,21 @@ variable "ami_id" {
 variable "availability_zone" {
   default = "eu-west-1a, eu-west-1b, eu-west-1c"
 }
+variable "name" {
+  default="Eng14app"
+}
+
+
+variable "cidr_block" {
+  default="10.7.0.0/16"
+}
+
+variable "internal" {
+  description = "should the ELB be internal or external"
+  default = "false"
+}
+
+variable "zone_id" {
+  description = "Sparta Education Zone ID"
+  default="Z3CCIZELFLJ3SC"
+}
