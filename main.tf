@@ -29,12 +29,12 @@ data "template_file" "app_init" {
 
 module "app" {
   source = "./modules/app_tier"
-  app_ig_id = "${aws_internet_gateway.app.id}"
-  subnet = "${}"
+  ig_id = "${aws_internet_gateway.app.id}"
   vpc_id = "${aws_vpc.Eng14vpc.id}"
   user_data = "${data.template_file.app_init.rendered}"
   ami = "${var.app_ami}"
 }
+
 
 #Module for the DB
 module "db" {
