@@ -1,3 +1,7 @@
+variable "vpc_id" {
+  description = "the vpc id"
+}
+
 variable "db_ami_id" {
   default = "ami-0af33b09923244b93"
 }
@@ -5,8 +9,6 @@ variable "db_ami_id" {
 variable "name" {
   default = "Mongod"
 }
-
-
 
 variable "region1" {
   default = "eu-central-1a"

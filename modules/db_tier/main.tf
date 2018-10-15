@@ -131,3 +131,41 @@ resource "aws_autoscaling_group" "db" {
   launch_configuration = "${aws_launch_configuration.db.name}"
   vpc_zone_identifier = ["${aws_subnet.db1.id}","${aws_subnet.db2.id}","${aws_subnet.db3.id}"]
 }
+
+resource "aws_lb" "db_lb" {
+  name               = "${var.name}-lb-tf"
+  internal           = false
+  load_balancer_type = "network"
+  subnets            = ["${aws_subnet.db1.id}"]
+  enable_deletion_protection = false
+
+  tags {
+    Name = "${var.name}_lb"
+  }
+}
+
+resource "aws_lb_target_group" "db_TG" {
+  name     = "${var.name}-target-group"
+  port     = "27017"
+  protocol = "TCP"
+  vpc_id   = "${var.vpc_id}"
+}
+
+resource "aws_lb_listener" "db_ln_l" {
+  load_balancer_arn = "${aws_lb.db_lb.arn}"
+  port              = "27017"
+  protocol          = "TCP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.db_TG.arn}"
+  }
+}
+
+resource "aws_route53_record" "www" {
+  zone_id = "Z3CCIZELFLJ3SC"
+  name    = "Eng14db.spartaglobal.education"
+  type    = "cname"
+  ttl     = "300"
+  records = ["${aws_lb.db_lb.dns_name}"]
+}
