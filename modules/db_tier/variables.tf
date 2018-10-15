@@ -6,9 +6,7 @@ variable "name" {
   default = "Mongod"
 }
 
-variable "db_sg" {
-  default = "${aws_security_group.db.id}"
-}
+
 
 variable "region1" {
   default = "eu-central-1a"

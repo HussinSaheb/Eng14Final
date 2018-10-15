@@ -11,7 +11,7 @@ resource "aws_route_table" "db" {
 #Private subnet for the DB
 resource "aws_subnet" "db1" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.0.2.0/24"
+  cidr_block = "10.0.3.0/24"
   availability_zone = "${var.region1}"
   map_public_ip_on_launch = false
   tags {
@@ -21,7 +21,7 @@ resource "aws_subnet" "db1" {
 
 resource "aws_subnet" "db2" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.0.3.0/24"
+  cidr_block = "10.0.4.0/24"
   availability_zone = "${var.region2}"
   map_public_ip_on_launch = false
   tags {
@@ -31,7 +31,7 @@ resource "aws_subnet" "db2" {
 
 resource "aws_subnet" "db3" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.0.4.0/24"
+  cidr_block = "10.0.5.0/24"
   availability_zone = "${var.region3}"
   map_public_ip_on_launch = false
   tags {
@@ -41,7 +41,9 @@ resource "aws_subnet" "db3" {
 
 #Route table for the private DB
 resource "aws_route_table_association" "db" {
-  subnet_ids     = ["${aws_subnet.db1.id}","${aws_subnet.db2.id}","${aws_subnet.db3.id}"]
+  subnet_ids     = ["${aws_subnet.db1.id}",
+                    "${aws_subnet.db2.id}",
+                    "${aws_subnet.db3.id}"]
   route_table_id = "${aws_route_table.db.id}"
 }
 
@@ -62,7 +64,7 @@ resource "aws_security_group" "db" {
     from_port = 0
     to_port = 0
     protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["10.0.0.0/16"]
   }
 
   tags {
@@ -113,7 +115,7 @@ resource "aws_launch_configuration" "db" {
   name = "${var.name}-tf-launch_configuration"
   image_id = "${var.db_ami_id}"
   instance_type = "t2.micro"
-  security_groups = ["${var.db_sg}}"]
+  security_groups = ["${aws_security_group.db.id}}"]
   user_data = "${var.user_data}"
 }
 
