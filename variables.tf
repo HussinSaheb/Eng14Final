@@ -3,9 +3,9 @@ variable "name" {
 }
 
 variable "app_ami" {
-  default = "ami-08024609f6e6bc21b"
+  default = "ami-01c2032f7a7ffa4e2"
 }
 
 variable "db_ami" {
-  default = "ami-0fc457fe0e90a6289"
+  default = "ami-01c2032f7a7ffa4e2"
 }
