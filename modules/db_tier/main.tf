@@ -149,6 +149,7 @@ resource "aws_lb_target_group" "db_TG" {
   port     = "27017"
   protocol = "TCP"
   vpc_id   = "${var.vpc_id}"
+  target_type = "10.0.3.0/24"
 }
 
 resource "aws_lb_listener" "db_ln_l" {
