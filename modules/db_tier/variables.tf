@@ -11,20 +11,20 @@ variable "name" {
 }
 
 variable "region1" {
-  default = "eu-central-1a"
+  default = "eu-west-1a"
 }
 
 variable "region2" {
-  default = "eu-central-1b"
+  default = "eu-west-1b"
 }
 
 variable "region3" {
-  default = "eu-central-1c"
+  default = "eu-west-1c"
 }
 
-variable "user_data" {
-  description = "the user data for db"
-}
+# variable "user_data" {
+#   description = "the user data for db"
+# }
 
 variable "app_sg" {
   description = "the app security group"

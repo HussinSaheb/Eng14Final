@@ -2,8 +2,6 @@ variable "vpc_id" {
   description = "the vpc to launch the resource to"
 }
 
-
-
 variable "user_data" {
   description = "the user data to provision the instance"
 }
@@ -11,7 +9,6 @@ variable "user_data" {
 variable "ig_id" {
   description = "The internet gateway to attach to route table"
 }
-
 
 variable "ami_id" {
   description = "The app ami"
@@ -25,9 +22,8 @@ variable "name" {
   description = "The name of the user"
 }
 
-
 variable "cidr_block" {
-  default="10.7.0.0/16"
+  default="10.0.0.0/16"
 }
 
 variable "internal" {

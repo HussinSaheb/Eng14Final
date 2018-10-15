@@ -40,10 +40,16 @@ resource "aws_subnet" "db3" {
 }
 
 #Route table for the private DB
-resource "aws_route_table_association" "db" {
-  subnet_ids     = ["${aws_subnet.db1.id}",
-                    "${aws_subnet.db2.id}",
-                    "${aws_subnet.db3.id}"]
+resource "aws_route_table_association" "db1" {
+  subnet_id     = "${aws_subnet.db1.id}"
+  route_table_id = "${aws_route_table.db.id}"
+}
+resource "aws_route_table_association" "db2" {
+  subnet_id     = "${aws_subnet.db2.id}"
+  route_table_id = "${aws_route_table.db.id}"
+}
+resource "aws_route_table_association" "db3" {
+  subnet_id     = "${aws_subnet.db3.id}"
   route_table_id = "${aws_route_table.db.id}"
 }
 
@@ -95,14 +101,6 @@ resource "aws_network_acl" "db" {
     to_port = 65535
   }
 
-  ingress {
-    protocol = "tcp"
-    rule_no = 120
-    action = "allow"
-    cidr_block = "${var.app_subnet_cidr_block}"
-    from_port = 1024
-    to_port = 65535
-  }
   subnet_ids = ["${aws_subnet.db1.id}","${aws_subnet.db2.id}","${aws_subnet.db3.id}"]
 
   tags {
@@ -115,8 +113,8 @@ resource "aws_launch_configuration" "db" {
   name = "${var.name}-tf-launch_configuration"
   image_id = "${var.db_ami_id}"
   instance_type = "t2.micro"
-  security_groups = ["${aws_security_group.db.id}}"]
-  user_data = "${var.user_data}"
+  security_groups = ["${aws_security_group.db.id}"]
+  # user_data = "${var.user_data}"
 }
 
 #Creating the Autoscaling group
@@ -126,10 +124,17 @@ resource "aws_autoscaling_group" "db" {
   min_size = 0
   health_check_grace_period = 300
   health_check_type = "ELB"
-  desired_capacity = 2
+  desired_capacity = 3
   force_delete = true
   launch_configuration = "${aws_launch_configuration.db.name}"
   vpc_zone_identifier = ["${aws_subnet.db1.id}","${aws_subnet.db2.id}","${aws_subnet.db3.id}"]
+  target_group_arns = ["${aws_lb_target_group.db_TG.arn}"]
+  tags {
+    key = "Name"
+    value = "Eng14db-${count.index}"
+    propagate_at_launch = true
+  }
+
 }
 
 resource "aws_lb" "db_lb" {
@@ -149,7 +154,6 @@ resource "aws_lb_target_group" "db_TG" {
   port     = "27017"
   protocol = "TCP"
   vpc_id   = "${var.vpc_id}"
-  target_type = "10.0.3.0/24"
 }
 
 resource "aws_lb_listener" "db_ln_l" {
@@ -165,8 +169,8 @@ resource "aws_lb_listener" "db_ln_l" {
 
 resource "aws_route53_record" "www" {
   zone_id = "Z3CCIZELFLJ3SC"
-  name    = "Eng14db.spartaglobal.education"
-  type    = "cname"
+  name    = "eng14db.spartaglobal.education"
+  type    = "CNAME"
   ttl     = "300"
   records = ["${aws_lb.db_lb.dns_name}"]
 }

@@ -40,7 +40,6 @@ module "db" {
   source = "./modules/db_tier"
   vpc_id = "${aws_vpc.Eng14vpc.id}"
   db_ami_id = "${var.db_ami}"
-  user_data = ""
   app_sg = "${module.app.security_group_id}"
   app_subnet_cidr_block = "${module.app.subnet_cidr_block}"
 }

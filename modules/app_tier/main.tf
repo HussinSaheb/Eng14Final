@@ -3,7 +3,7 @@
 # create a subnet
 resource "aws_subnet" "app1" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.7.0.0/24"
+  cidr_block = "10.0.0.0/24"
   map_public_ip_on_launch = true
   availability_zone = "eu-west-1a"
   tags {
@@ -12,7 +12,7 @@ resource "aws_subnet" "app1" {
 }
 resource "aws_subnet" "app2" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.7.1.0/24"
+  cidr_block = "10.0.1.0/24"
   map_public_ip_on_launch = true
   availability_zone = "eu-west-1b"
   tags {
@@ -21,7 +21,7 @@ resource "aws_subnet" "app2" {
 }
 resource "aws_subnet" "app3" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.7.2.0/24"
+  cidr_block = "10.0.2.0/24"
   map_public_ip_on_launch = true
   availability_zone = "eu-west-1c"
   tags {
@@ -103,33 +103,7 @@ resource "aws_network_acl" "app" {
 }
 
 # public route table
-resource "aws_route_table" "app1" {
-  vpc_id = "${var.vpc_id}"
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = "${var.ig_id}"
-  }
-
-  tags {
-    Name = "${var.name}-public"
-  }
-}
-
-resource "aws_route_table" "app2" {
-  vpc_id = "${var.vpc_id}"
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = "${var.ig_id}"
-  }
-
-  tags {
-    Name = "${var.name}-public"
-  }
-}
-
-resource "aws_route_table" "app3" {
+resource "aws_route_table" "app" {
   vpc_id = "${var.vpc_id}"
 
   route {
@@ -144,33 +118,33 @@ resource "aws_route_table" "app3" {
 
 resource "aws_route_table_association" "app1" {
   subnet_id      = "${aws_subnet.app1.id}"
-  route_table_id = "${aws_route_table.app1.id}"
+  route_table_id = "${aws_route_table.app.id}"
 }
 
 resource "aws_route_table_association" "app2" {
   subnet_id      = "${aws_subnet.app2.id}"
-  route_table_id = "${aws_route_table.app1.id}"
+  route_table_id = "${aws_route_table.app.id}"
 }
 
 resource "aws_route_table_association" "app3" {
   subnet_id      = "${aws_subnet.app3.id}"
-  route_table_id = "${aws_route_table.app1.id}"
+  route_table_id = "${aws_route_table.app.id}"
 }
 
 # Route 53
 resource "aws_route53_record" "www" {
   zone_id = "${var.zone_id}"
-  name    = "els"
+  name    = "eng14.spartaglobal.education"
   type    = "CNAME"
   ttl     = "300"
-  records = ["${aws_lb.ElsLB.dns_name}"]
+  records = ["${aws_lb.Eng14LB.dns_name}"]
 }
 
 ### load_balancers
 resource "aws_security_group" "elb"  {
   name = "${var.name}-elb"
   description = "Allow all inbound traffic through port 80 and 443."
-  vpc_id = "${aws_vpc.app.id}"
+  vpc_id = "${var.vpc_id}"
 
   ingress {
     from_port       = 80
@@ -196,7 +170,7 @@ resource "aws_security_group" "elb"  {
 }
 
 
-resource "aws_lb" "ElsLB" {
+resource "aws_lb" "Eng14LB" {
   name               = "${var.name}-app-elb"
   internal           = false
   load_balancer_type = "network"
@@ -204,48 +178,48 @@ resource "aws_lb" "ElsLB" {
   enable_deletion_protection = false
 
   tags {
-    Name = "ElsLB"
+    Name = "Eng14LB"
   }
 }
 
-resource "aws_lb_target_group" "ElsAppTG" {
-  name     = "ElsAppTG"
+resource "aws_lb_target_group" "Eng14AppTG" {
+  name     = "Eng14AppTG"
   port     = 80
   protocol = "TCP"
-  vpc_id   = "${aws_vpc.app.id}"
+  vpc_id   = "${var.vpc_id}"
 }
 
-resource "aws_lb_listener" "ElsAppL" {
-  load_balancer_arn = "${aws_lb.ElsLB.arn}"
+resource "aws_lb_listener" "Eng14AppL" {
+  load_balancer_arn = "${aws_lb.Eng14LB.arn}"
   port = 80
   protocol = "TCP"
 
   default_action {
     type = "forward"
-    target_group_arn = "${aws_lb_target_group.ElsAppTG.arn}"
+    target_group_arn = "${aws_lb_target_group.Eng14AppTG.arn}"
   }
 }
 
-resource "aws_launch_configuration" "ElsLaunchConfig" {
+resource "aws_launch_configuration" "Eng14LaunchConfig" {
   name_prefix   = "${var.name}-app"
-  image_id      = "${var.app_ami_id}"
+  image_id      = "${var.ami_id}"
   instance_type = "t2.micro"
-  user_data = "${data.template_file.app_init.rendered}"
-  security_groups = ["${aws_security_group_id}"]
+  user_data = "${var.user_data}"
+  security_groups = ["${aws_security_group.app.id}"]
 
 }
 
-resource "aws_autoscaling_group" "ElsAppAutoScaling" {
-  name = "ElsAppAutoScaling"
+resource "aws_autoscaling_group" "Eng14AppAutoScaling" {
+  name = "Eng14AppAutoScaling"
   vpc_zone_identifier = ["${aws_subnet.app1.id}", "${aws_subnet.app2.id}", "${aws_subnet.app3.id}"]
   desired_capacity = 3
   max_size = 3
   min_size = 3
-  launch_configuration = "${aws_launch_configuration.ElsLaunchConfig.name}"
-  target_group_arns = ["${aws_lb_target_group.ElsAppTG.arn}"]
+  launch_configuration = "${aws_launch_configuration.Eng14LaunchConfig.name}"
+  target_group_arns = ["${aws_lb_target_group.Eng14AppTG.arn}"]
   tags {
     key = "Name"
-    value = "els-App-AS"
+    value = "Eng14app"
     propagate_at_launch = true
   }
 }
