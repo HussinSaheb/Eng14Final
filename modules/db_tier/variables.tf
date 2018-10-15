@@ -1,3 +1,7 @@
+variable "vpc_id" {
+  description = "the vpc id"
+}
+
 variable "db_ami_id" {
   description = "ami for the database"
 }
