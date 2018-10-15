@@ -1,5 +1,5 @@
 variable "db_ami_id" {
-  default = "ami-0af33b09923244b93"
+  description = "ami for the database"
 }
 
 variable "name" {
