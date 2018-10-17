@@ -55,24 +55,28 @@ module "db" {
 }
 
 module "elasticsearch" {
-  source "./modules/elasticsearch"
+  source = "./modules/elasticsearch"
   vpc_id = "${aws_vpc.Eng14vpc.id}"
   ig_id = "${aws_internet_gateway.app.id}"
   subnet_id = "${aws_subnet.elk_stack.id}"
+  ami_id = "${var.es_ami}"
+  ls_sg_id = "${module.logstash.sg_id}"
 }
 
 module "logstash" {
-  source "./modules/logstash"
+  source = "./modules/logstash"
   vpc_id = "${aws_vpc.Eng14vpc.id}"
   ig_id = "${aws_internet_gateway.app.id}"
   subnet_id = "${aws_subnet.elk_stack.id}"
   app_sg = "${module.app.security_group_id}"
   db_sg = "${module.db.security_group_id}"
+  ami_id = "${var.ls_ami}"
 }
 
 module "kibana" {
-  source "./modules/kibana"
+  source = "./modules/kibana"
   vpc_id = "${aws_vpc.Eng14vpc.id}"
   ig_id = "${aws_internet_gateway.app.id}"
   subnet_id = "${aws_subnet.elk_stack.id}"
+  ami_id = "${var.kb_ami}"
 }
