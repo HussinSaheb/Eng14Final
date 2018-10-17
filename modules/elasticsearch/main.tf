@@ -33,7 +33,7 @@ resource "aws_security_group" "es_sg"  {
 resource "aws_instance" "elasticsearch" {
   ami = "${var.ami_id}"
   subnet_id = "${var.subnet_id}"
-  vpc_security_group_ids = "${aws_security_group.es_sg.id}"
+  vpc_security_group_ids = ["${aws_security_group.es_sg.id}"]
   instance_type = "t2.micro"
   tags {
     Name = "Elasticsearch-Test"

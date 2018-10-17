@@ -50,7 +50,7 @@ resource "aws_security_group" "lg_db_sg"  {
 resource "aws_instance" "logstash-app" {
   ami = "${var.ami_id}"
   subnet_id = "${var.subnet_id}"
-  vpc_security_group_ids = "${aws_security_group.lg_app_sg.id}"
+  vpc_security_group_ids = ["${aws_security_group.lg_app_sg.id}"]
   instance_type = "t2.micro"
   tags {
     Name = "Logstash-app-Test"
@@ -60,7 +60,7 @@ resource "aws_instance" "logstash-app" {
 resource "aws_instance" "logstash-db" {
   ami = "${var.ami_id}"
   subnet_id = "${var.subnet_id}"
-  vpc_security_group_ids = "${aws_security_group.lg_db_sg.id}"
+  vpc_security_group_ids = ["${aws_security_group.lg_db_sg.id}"]
   instance_type = "t2.micro"
   tags {
     Name = "Logstash-db-Test"
