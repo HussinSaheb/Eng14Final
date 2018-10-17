@@ -3,7 +3,7 @@
 # create a subnet
 resource "aws_subnet" "app1" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.0.0.0/24"
+  cidr_block = "10.1.0.0/24"
   map_public_ip_on_launch = true
   availability_zone = "eu-west-1a"
   tags {
@@ -12,7 +12,7 @@ resource "aws_subnet" "app1" {
 }
 resource "aws_subnet" "app2" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.0.1.0/24"
+  cidr_block = "10.1.1.0/24"
   map_public_ip_on_launch = true
   availability_zone = "eu-west-1b"
   tags {
@@ -21,7 +21,7 @@ resource "aws_subnet" "app2" {
 }
 resource "aws_subnet" "app3" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.0.2.0/24"
+  cidr_block = "10.1.2.0/24"
   map_public_ip_on_launch = true
   availability_zone = "eu-west-1c"
   tags {
@@ -138,35 +138,6 @@ resource "aws_route53_record" "www" {
   type    = "CNAME"
   ttl     = "300"
   records = ["${aws_lb.Eng14LB.dns_name}"]
-}
-
-### load_balancers
-resource "aws_security_group" "elb"  {
-  name = "${var.name}-elb"
-  description = "Allow all inbound traffic through port 80 and 443."
-  vpc_id = "${var.vpc_id}"
-
-  ingress {
-    from_port       = 80
-    to_port         = 80
-    protocol        = "tcp"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
-  ingress {
-    from_port       = 443
-    to_port         = 443
-    protocol        = "tcp"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
-  egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
-  tags {
-    Name = "${var.name}-elb"
-  }
 }
 
 

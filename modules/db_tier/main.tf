@@ -8,10 +8,11 @@ resource "aws_route_table" "db" {
   }
 }
 
+
 #Private subnet for the DB
 resource "aws_subnet" "db1" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.0.3.0/24"
+  cidr_block = "10.1.3.0/24"
   availability_zone = "${var.region1}"
   map_public_ip_on_launch = false
   tags {
@@ -21,7 +22,7 @@ resource "aws_subnet" "db1" {
 
 resource "aws_subnet" "db2" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.0.4.0/24"
+  cidr_block = "10.1.4.0/24"
   availability_zone = "${var.region2}"
   map_public_ip_on_launch = false
   tags {
@@ -31,7 +32,7 @@ resource "aws_subnet" "db2" {
 
 resource "aws_subnet" "db3" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.0.5.0/24"
+  cidr_block = "10.1.5.0/24"
   availability_zone = "${var.region3}"
   map_public_ip_on_launch = false
   tags {
@@ -65,12 +66,19 @@ resource "aws_security_group" "db" {
     protocol = "tcp"
     security_groups = ["${var.app_sg}"]
   }
+  ingress {
+    from_port = "27017"
+    to_port = "27017"
+    protocol = "tcp"
+    cidr_blocks = ["10.1.0.0/16"]
+  }
+
 
   egress {
     from_port = 0
     to_port = 0
     protocol = "-1"
-    cidr_blocks = ["10.0.0.0/16"]
+    cidr_blocks = ["10.1.0.0/16"]
   }
 
   tags {
@@ -86,7 +94,7 @@ resource "aws_network_acl" "db" {
     protocol = "tcp"
     rule_no = 100
     action = "allow"
-    cidr_block = "${var.app_subnet_cidr_block}"
+    cidr_block = "10.1.0.0/16"
     from_port = 27017
     to_port = 27017
   }
@@ -96,7 +104,7 @@ resource "aws_network_acl" "db" {
     protocol = "tcp"
     rule_no = 120
     action = "allow"
-    cidr_block = "${var.app_subnet_cidr_block}"
+    cidr_block = "10.1.0.0/16"
     from_port = 1024
     to_port = 65535
   }
@@ -122,8 +130,6 @@ resource "aws_autoscaling_group" "db" {
   name = "db-tf-asg"
   max_size = 3
   min_size = 0
-  health_check_grace_period = 300
-  health_check_type = "ELB"
   desired_capacity = 3
   force_delete = true
   launch_configuration = "${aws_launch_configuration.db.name}"
@@ -131,23 +137,11 @@ resource "aws_autoscaling_group" "db" {
   target_group_arns = ["${aws_lb_target_group.db_TG.arn}"]
   tags {
     key = "Name"
-    value = "Eng14db-${count.index}"
+    value = "Eng14db"
     propagate_at_launch = true
   }
-
 }
 
-resource "aws_lb" "db_lb" {
-  name               = "${var.name}-lb-tf"
-  internal           = false
-  load_balancer_type = "network"
-  subnets            = ["${aws_subnet.db1.id}"]
-  enable_deletion_protection = false
-
-  tags {
-    Name = "${var.name}_lb"
-  }
-}
 
 resource "aws_lb_target_group" "db_TG" {
   name     = "${var.name}-target-group"
@@ -160,17 +154,19 @@ resource "aws_lb_listener" "db_ln_l" {
   load_balancer_arn = "${aws_lb.db_lb.arn}"
   port              = "27017"
   protocol          = "TCP"
-
   default_action {
     type             = "forward"
     target_group_arn = "${aws_lb_target_group.db_TG.arn}"
   }
 }
 
-resource "aws_route53_record" "www" {
-  zone_id = "Z3CCIZELFLJ3SC"
-  name    = "eng14db.spartaglobal.education"
-  type    = "CNAME"
-  ttl     = "300"
-  records = ["${aws_lb.db_lb.dns_name}"]
+resource "aws_lb" "db_lb" {
+  name               = "${var.name}-lb"
+  internal           = false
+  load_balancer_type = "network"
+  enable_deletion_protection = false
+  subnets= ["${aws_subnet.db1.id}"]
+  tags {
+    Name = "${var.name}_lb"
+  }
 }

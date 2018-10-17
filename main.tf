@@ -6,7 +6,7 @@ provider "aws" {
 # 1 - terraform
 # Creating a VPC
 resource "aws_vpc" "Eng14vpc" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = "10.1.0.0/16"
   tags {
     Name = "${var.name}-vpc"
   }
@@ -23,7 +23,7 @@ resource "aws_internet_gateway" "app" {
 data "template_file" "app_init" {
    template = "${file("./scripts/app/setup.sh.tpl")}"
    vars {
-      db_host="mongodb://eng14db.spartaglobal.education:27017/posts"
+      ip = "${module.db.db_eip}"
    }
 }
 
