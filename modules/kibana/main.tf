@@ -15,7 +15,14 @@ resource "aws_security_group" "kb_app_sg"  {
     from_port       = "80"
     to_port         = "80"
     protocol        = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["62.249.208.122/32"]
+  }
+
+  ingress {
+    from_port       = "5601"
+    to_port         = "5601"
+    protocol        = "tcp"
+    cidr_blocks = ["62.249.208.122/32"]
   }
 
   ingress {
