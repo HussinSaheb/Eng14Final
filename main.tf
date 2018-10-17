@@ -20,6 +20,25 @@ resource "aws_internet_gateway" "app" {
   }
 }
 
+# public route table
+resource "aws_route_table" "elkRT" {
+  vpc_id = "${aws_vpc.Eng14vpc.id}"
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = "${aws_internet_gateway.app.id}"
+  }
+
+  tags {
+    Name = "elk-public"
+  }
+}
+
+resource "aws_route_table_association" "elkRTAssoc" {
+  subnet_id      = "${aws_subnet.elk_stack.id}"
+  route_table_id = "${aws_route_table.elkRT.id}"
+}
+
 resource "aws_subnet" "elk_stack" {
   vpc_id = "${aws_vpc.Eng14vpc.id}"
   cidr_block = "10.0.6.0/24"
