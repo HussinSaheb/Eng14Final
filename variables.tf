@@ -15,7 +15,7 @@ variable "es_ami" {
 }
 
 variable "ls_ami" {
-  default = ""
+  default = "ami-08d58518c8d44659d"
 }
 
 variable "kb_ami" {

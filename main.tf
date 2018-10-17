@@ -66,6 +66,8 @@ module "logstash" {
   vpc_id = "${aws_vpc.Eng14vpc.id}"
   ig_id = "${aws_internet_gateway.app.id}"
   subnet_id = "${aws_subnet.elk_stack.id}"
+  app_sg = "${module.app.security_group_id}"
+  db_sg = "${module.db.security_group_id}"
 }
 
 module "kibana" {
