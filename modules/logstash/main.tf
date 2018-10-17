@@ -1,7 +1,7 @@
 # Security
 resource "aws_security_group" "lg_app_sg"  {
-  name = "${var.name}"
-  description = "${var.name} access"
+  name = "LS_App_Group"
+  description = "LS_App_Group access"
   vpc_id = "${var.vpc_id}"
 
   ingress {
@@ -19,13 +19,13 @@ resource "aws_security_group" "lg_app_sg"  {
   }
 
   tags {
-    Name = "${var.name}"
+    Name = "LS_App_Group"
   }
 }
 
 resource "aws_security_group" "lg_db_sg"  {
-  name = "${var.name}"
-  description = "${var.name} access"
+  name = "LS_DB_Group"
+  description = "LS_DB_Group access"
   vpc_id = "${var.vpc_id}"
 
   ingress {
@@ -43,7 +43,7 @@ resource "aws_security_group" "lg_db_sg"  {
   }
 
   tags {
-    Name = "${var.name}"
+    Name = "LS_DB_Group"
   }
 }
 

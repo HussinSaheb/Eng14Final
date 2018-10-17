@@ -11,6 +11,13 @@ resource "aws_security_group" "kb_app_sg"  {
     security_groups = ["${var.es_sg}"]
   }
 
+  ingress {
+    from_port       = "80"
+    to_port         = "80"
+    protocol        = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port       = 0
     to_port         = 0
@@ -21,6 +28,15 @@ resource "aws_security_group" "kb_app_sg"  {
   tags {
     Name = "${var.name}"
   }
+}
+
+# Route 53
+resource "aws_route53_record" "www" {
+  zone_id = "${var.zone_id}"
+  name    = "kibana14.spartaglobal.education"
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["${aws_instance.kibana.public_ip}"]
 }
 
 resource "aws_instance" "kibana" {
