@@ -60,7 +60,8 @@ module "elasticsearch" {
   ig_id = "${aws_internet_gateway.app.id}"
   subnet_id = "${aws_subnet.elk_stack.id}"
   ami_id = "${var.es_ami}"
-  ls_sg_id = "${module.logstash.sg_id}"
+  ls_app_sg_id = "${module.logstash.sg_app_id}"
+  ls_db_sg_id = "${module.logstash.sg_db_id}"
 }
 
 module "logstash" {
@@ -79,4 +80,5 @@ module "kibana" {
   ig_id = "${aws_internet_gateway.app.id}"
   subnet_id = "${aws_subnet.elk_stack.id}"
   ami_id = "${var.kb_ami}"
+  es_sg = "${module.elasticsearch.es_sg_id}"
 }
