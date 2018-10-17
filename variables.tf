@@ -11,13 +11,13 @@ variable "db_ami" {
 }
 
 variable "es_ami" {
-  default = "ami-024bbdc65651e7ae5"
+  default = "ami-04b67e7066ccb00ac"
 }
 
 variable "ls_ami" {
-  default = "ami-08d58518c8d44659d"
+  default = "ami-0a6fbb9e622e96c3d"
 }
 
 variable "kb_ami" {
-  default = "ami-085fbe53d7c21cad3"
+  default = "ami-0250f4274a925d575"
 }

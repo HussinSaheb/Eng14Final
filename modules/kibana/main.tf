@@ -8,7 +8,7 @@ resource "aws_security_group" "kb_app_sg"  {
     from_port       = "1024"
     to_port         = "65535"
     protocol        = "tcp"
-    security_groups = ["${var.es_sg}"]
+    security_groups = ["10.1.6.3/32"]
   }
 
   ingress {
@@ -44,6 +44,7 @@ resource "aws_instance" "kibana" {
   subnet_id = "${var.subnet_id}"
   vpc_security_group_ids = ["${aws_security_group.kb_app_sg.id}"]
   instance_type = "t2.micro"
+  private_ip = "10.1.6.4"
   tags {
     Name = "Kibana-Test"
   }

@@ -11,7 +11,7 @@ resource "aws_route_table" "db" {
 #Private subnet for the DB
 resource "aws_subnet" "db1" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.0.3.0/24"
+  cidr_block = "10.1.3.0/24"
   availability_zone = "${var.region1}"
   map_public_ip_on_launch = false
   tags {
@@ -21,7 +21,7 @@ resource "aws_subnet" "db1" {
 
 resource "aws_subnet" "db2" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.0.4.0/24"
+  cidr_block = "10.1.4.0/24"
   availability_zone = "${var.region2}"
   map_public_ip_on_launch = false
   tags {
@@ -31,7 +31,7 @@ resource "aws_subnet" "db2" {
 
 resource "aws_subnet" "db3" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.0.5.0/24"
+  cidr_block = "10.1.5.0/24"
   availability_zone = "${var.region3}"
   map_public_ip_on_launch = false
   tags {
@@ -70,7 +70,7 @@ resource "aws_security_group" "db" {
     from_port = 0
     to_port = 0
     protocol = "-1"
-    cidr_blocks = ["10.0.0.0/16"]
+    cidr_blocks = ["10.1.0.0/16"]
   }
 
   tags {

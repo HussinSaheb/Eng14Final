@@ -6,7 +6,7 @@ provider "aws" {
 # 1 - terraform
 # Creating a VPC
 resource "aws_vpc" "Eng14vpc" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = "10.1.0.0/16"
   tags {
     Name = "${var.name}-vpc"
   }
@@ -41,7 +41,7 @@ resource "aws_route_table_association" "elkRTAssoc" {
 
 resource "aws_subnet" "elk_stack" {
   vpc_id = "${aws_vpc.Eng14vpc.id}"
-  cidr_block = "10.0.6.0/24"
+  cidr_block = "10.1.6.0/24"
   map_public_ip_on_launch = true
   availability_zone = "eu-west-1a"
   tags {
