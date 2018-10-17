@@ -3,21 +3,21 @@ variable "name" {
 }
 
 variable "app_ami" {
-  default = "ami-0f430ee47b4b8ed28"
+  default = "ami-098527683fee67bd7"
 }
 
 variable "db_ami" {
-  default = "ami-0874d4c2b189c3b6b"
+  default = "ami-01f0922925eb8d1c8"
 }
 
 variable "es_ami" {
-  default = "ami-04b67e7066ccb00ac"
+  default = "ami-0a86f2b19a22825eb"
 }
 
 variable "ls_ami" {
-  default = "ami-0a6fbb9e622e96c3d"
+  default = "ami-03db1de37f05ce4cb"
 }
 
 variable "kb_ami" {
-  default = "ami-0250f4274a925d575"
+  default = "ami-08dfe5b18b04c1985"
 }

@@ -8,6 +8,4 @@ variable "app_sg" {}
 
 variable "db_sg" {}
 
-variable "db_sg" {}
-
 variable "ami_id" {}

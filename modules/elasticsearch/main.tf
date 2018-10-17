@@ -8,14 +8,14 @@ resource "aws_security_group" "es_sg"  {
     from_port       = "1024"
     to_port         = "65535"
     protocol        = "tcp"
-    security_groups = ["10.1.6.1/32"]
+    cidr_blocks = ["10.1.6.7/32"]
   }
 
   ingress {
     from_port       = "1024"
     to_port         = "65535"
     protocol        = "tcp"
-    security_groups = ["10.1.6.2/32"]
+    cidr_blocks     = ["10.1.6.4/32"]
   }
 
   egress {
@@ -35,7 +35,7 @@ resource "aws_instance" "elasticsearch" {
   subnet_id = "${var.subnet_id}"
   vpc_security_group_ids = ["${aws_security_group.es_sg.id}"]
   instance_type = "t2.micro"
-  private_ip = "10.1.6.3"
+  private_ip = "10.1.6.5"
   tags {
     Name = "Elasticsearch-Test"
   }

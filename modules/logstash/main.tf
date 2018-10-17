@@ -52,7 +52,7 @@ resource "aws_instance" "logstash-app" {
   subnet_id = "${var.subnet_id}"
   vpc_security_group_ids = ["${aws_security_group.lg_app_sg.id}"]
   instance_type = "t2.micro"
-  private_ip = "10.1.6.1"
+  private_ip = "10.1.6.7"
   tags {
     Name = "Logstash-app-Test"
   }
@@ -63,7 +63,7 @@ resource "aws_instance" "logstash-db" {
   subnet_id = "${var.subnet_id}"
   vpc_security_group_ids = ["${aws_security_group.lg_db_sg.id}"]
   instance_type = "t2.micro"
-  private_ip = "10.1.6.2"
+  private_ip = "10.1.6.4"
   tags {
     Name = "Logstash-db-Test"
   }

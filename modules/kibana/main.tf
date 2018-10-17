@@ -8,7 +8,7 @@ resource "aws_security_group" "kb_app_sg"  {
     from_port       = "1024"
     to_port         = "65535"
     protocol        = "tcp"
-    security_groups = ["10.1.6.3/32"]
+    cidr_blocks     = ["10.1.6.5/32"]
   }
 
   ingress {
@@ -21,13 +21,6 @@ resource "aws_security_group" "kb_app_sg"  {
   ingress {
     from_port       = "5601"
     to_port         = "5601"
-    protocol        = "tcp"
-    cidr_blocks = ["62.249.208.122/32"]
-  }
-
-  ingress {
-    from_port       = "22"
-    to_port         = "22"
     protocol        = "tcp"
     cidr_blocks = ["62.249.208.122/32"]
   }
@@ -58,7 +51,7 @@ resource "aws_instance" "kibana" {
   subnet_id = "${var.subnet_id}"
   vpc_security_group_ids = ["${aws_security_group.kb_app_sg.id}"]
   instance_type = "t2.micro"
-  private_ip = "10.1.6.4"
+  private_ip = "10.1.6.6"
   tags {
     Name = "Kibana-Test"
   }
