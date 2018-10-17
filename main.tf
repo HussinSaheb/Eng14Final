@@ -1,6 +1,6 @@
 #setting the provider in this case AWS
 provider "aws" {
-  region ="eu-west-1"
+  region ="eu-west-3"
 }
 
 # 1 - terraform
@@ -43,7 +43,7 @@ resource "aws_subnet" "elk_stack" {
   vpc_id = "${aws_vpc.Eng14vpc.id}"
   cidr_block = "10.1.6.0/24"
   map_public_ip_on_launch = true
-  availability_zone = "eu-west-1a"
+  availability_zone = "eu-west-3a"
   tags {
     Name = "ELK_Stack_PubSN"
   }
@@ -54,23 +54,6 @@ data "template_file" "app_init" {
    vars {
       db_host="mongodb://eng14db.spartaglobal.education:27017/posts"
    }
-}
-
-module "app" {
-  source = "./modules/app_tier"
-  vpc_id = "${aws_vpc.Eng14vpc.id}"
-  user_data = "${data.template_file.app_init.rendered}"
-  ig_id = "${aws_internet_gateway.app.id}"
-  ami_id = "${var.app_ami}"
-}
-
-#Module for the DB
-module "db" {
-  source = "./modules/db_tier"
-  vpc_id = "${aws_vpc.Eng14vpc.id}"
-  db_ami_id = "${var.db_ami}"
-  app_sg = "${module.app.security_group_id}"
-  app_subnet_cidr_block = "${module.app.subnet_cidr_block}"
 }
 
 module "elasticsearch" {
@@ -100,4 +83,21 @@ module "kibana" {
   subnet_id = "${aws_subnet.elk_stack.id}"
   ami_id = "${var.kb_ami}"
   es_sg = "${module.elasticsearch.es_sg_id}"
+}
+
+module "app" {
+  source = "./modules/app_tier"
+  vpc_id = "${aws_vpc.Eng14vpc.id}"
+  user_data = "${data.template_file.app_init.rendered}"
+  ig_id = "${aws_internet_gateway.app.id}"
+  ami_id = "${var.app_ami}"
+}
+
+#Module for the DB
+module "db" {
+  source = "./modules/db_tier"
+  vpc_id = "${aws_vpc.Eng14vpc.id}"
+  db_ami_id = "${var.db_ami}"
+  app_sg = "${module.app.security_group_id}"
+  app_subnet_cidr_block = "${module.app.subnet_cidr_block}"
 }

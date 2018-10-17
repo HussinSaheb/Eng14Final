@@ -8,21 +8,21 @@ resource "aws_security_group" "kb_app_sg"  {
     from_port       = "1024"
     to_port         = "65535"
     protocol        = "tcp"
-    cidr_blocks     = ["10.1.6.5/32"]
-  }
-
-  ingress {
-    from_port       = "80"
-    to_port         = "80"
-    protocol        = "tcp"
-    cidr_blocks = ["62.249.208.122/32"]
+    cidr_blocks     = ["0.0.0.0/0"]
   }
 
   ingress {
     from_port       = "5601"
     to_port         = "5601"
     protocol        = "tcp"
-    cidr_blocks = ["62.249.208.122/32"]
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port       = "5601"
+    to_port         = "5601"
+    protocol        = "tcp"
+    cidr_blocks     = ["0.0.0.0/0"]
   }
 
   egress {
@@ -37,15 +37,6 @@ resource "aws_security_group" "kb_app_sg"  {
   }
 }
 
-# Route 53
-resource "aws_route53_record" "www" {
-  zone_id = "${var.zone_id}"
-  name    = "kibana14.spartaglobal.education"
-  type    = "CNAME"
-  ttl     = "300"
-  records = ["${aws_instance.kibana.public_ip}"]
-}
-
 resource "aws_instance" "kibana" {
   ami = "${var.ami_id}"
   subnet_id = "${var.subnet_id}"
@@ -53,6 +44,6 @@ resource "aws_instance" "kibana" {
   instance_type = "t2.micro"
   private_ip = "10.1.6.6"
   tags {
-    Name = "Kibana-Test"
+    Name = "Kibana"
   }
 }
