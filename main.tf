@@ -7,6 +7,9 @@ provider "aws" {
 # Creating a VPC
 resource "aws_vpc" "Eng14vpc" {
   cidr_block = "10.1.0.0/16"
+  enable_dns_support = true
+  enable_dns_hostnames = true
+
   tags {
     Name = "${var.name}-vpc"
   }
@@ -42,4 +45,5 @@ module "db" {
   db_ami_id = "${var.db_ami}"
   app_sg = "${module.app.security_group_id}"
   app_subnet_cidr_block = "${module.app.subnet_cidr_block}"
+  ig_id = "${aws_internet_gateway.app.id}"
 }
