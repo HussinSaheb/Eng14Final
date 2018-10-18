@@ -156,18 +156,30 @@ resource "aws_security_group" "db" {
   }
 
   ingress {
+<<<<<<< HEAD
+    from_port = "1025"
+    to_port = "65535"
+=======
     from_port = "27017"
     to_port = "27017"
+>>>>>>> d7072e48e2906d0c0369d54fc00ce5906d4f93ea
     protocol = "tcp"
     cidr_blocks = ["10.1.0.0/16"]
   }
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> d7072e48e2906d0c0369d54fc00ce5906d4f93ea
   egress {
     from_port = 0
     to_port = 0
     protocol = "-1"
+<<<<<<< HEAD
+    cidr_blocks = ["10.1.0.0/16"]
+=======
     cidr_blocks = ["0.0.0.0/0"]
+>>>>>>> d7072e48e2906d0c0369d54fc00ce5906d4f93ea
   }
 
   tags {
@@ -186,6 +198,15 @@ resource "aws_network_acl" "db" {
     cidr_block = "10.1.0.0/16"
     from_port = 27017
     to_port = 27017
+  }
+
+  ingress {
+    protocol = "tcp"
+    rule_no = 110
+    action = "allow"
+    cidr_block = "10.1.0.0/16"
+    from_port = 1024
+    to_port = 65535
   }
 
   #Empheral ports
