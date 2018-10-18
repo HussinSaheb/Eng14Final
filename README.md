@@ -21,5 +21,5 @@ To access the app within the 2 tier architecture, in your web browser, search fo
 ```
 eng14app-app-elb-4165f30c978b2a7a.elb.eu-west-1.amazonaws.com
 ```
-You will the be able to
+You will be able to see this once you enter the DNS name.
 ![alt text](Images/Webpage.png)
