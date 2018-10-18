@@ -6,6 +6,8 @@
     1. [ Database. ](#database)
         * [ Solution 1: Load Balancer. ](#solution-1)
         * [ Solution 2: EIP. ](#solution-2)
+        * [ Solution 3: ](#solution-3)
+        * [ Final Solution: ](#final-solution)
     1. [ How it works. ](#how-it-works)
         * [ To deploy the replica-set manually. ](#manual-replica)
 * [ Diagrams. ](#diagrams)
@@ -34,6 +36,17 @@ Our first approach was to create a Load Balancer to get the IP of the primary da
 nslookup [DNS link] | grep -i address:- | tail -1 | cut -c 10-
 ```
 This command filtered the output we got from the nslookup to only display the IP. The IP was added to the db_host, but after trying out the APP to see if it could connect to the database, we received a 502 bad gateway error. The cause of this was the fact that the DNS ip of the load balancer wasn't the right one to allow connection to the database.
+
+#### <a name="solution-2"> Solution 2: EIP</a>
+Our second approach was to add an EIP to our instance, but there was an issue where we couldn't get the instance ID because the database instances were made with an autoscaler. The way we added associated the EIP with the instance is by adding a nat gateway inside the public subnet which shadows the databases private subnet. This way was easier to assign IP's in the user data, as we can directly access the EIP.
+
+When connecting to the database through the app we encountered the same problem we had with solution 1. we were received a 502 bad gateway error. The cause of this was the fact that the EIP wasn't the right one to allow connection to the database.
+
+
+#### <a name="solution-3"> Solution 3: </a>
+
+
+#### <a name="final-solution"> Final Solution: </a>
 
 
 ### <a name="how-it-works">How it works</a>
@@ -186,11 +199,6 @@ ___
 Using Terraform and AWS create a load balanced and autoscaled 2 tier architecture for the node example application.
 The Architecture should be a "Highly Available" application. Meaning that it has redundancies across all three availabililty zones.
 The application should connect to a single database instance.
-
-#### Deployment
-For the deployment of the app minstances to multiple availability zones, all the configurations are done through terraform.
-
-
 
 ## <a name="elk-stack">ELK STACK</a>
 Immutable architectures are notoriously difficult to debug because we no longer have access to the instances and thus do not have access to the logs for those machines.
