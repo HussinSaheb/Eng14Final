@@ -92,7 +92,19 @@ net:
 ```
 Port 27017 is the default port for MongoDB, and since we will be using several hosts which will ensure that MongoDB will listen for connections from applications on your configured addresses.
 
-Inside, you should be able to ssh into the mongo shell with the following command:
+Under 'Replication', it should have the following lines:
+```
+replication:
+  replSetName: Eng14
+```
+This is so that your replica-set members will fall under the same replica group.
+
+Once you are done making the change to the mongod.conf file, save and exit from there and restart the mongod service with the following command:
+```
+sudo systemctl restart mongod
+```
+
+Now ssh into the mongo shell with the following command:
 ```
 mongo
 ```
