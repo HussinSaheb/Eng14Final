@@ -251,10 +251,6 @@ Elasticsearch is a RESTful, JSON-based search and analytics engine, which packag
 
 Kibana lets users visualise logs and system data with charts and graphs.
 
-Bellow is the diagram of our ELK stack architecture:
-
-![ELK Stacks Architecture Diagram](Images/ELK_Stack.png)
-
 ## <a name="elk-in-project">The ELK Stack In This Project</a>
 
 FileBeat and MetricBeat have been installed on the Node App and Mongodb AWS instances, in order to monitor all machines.
@@ -264,3 +260,16 @@ Logstash, Elasticsearch and Kibana have been installed on three separate AWS ins
 Filebeat sends logs from the Node App and Mongodb instances to Logstash. MetricBeat sends system metrics from those instances to Logstash as well. The type of logs that Filebeat sends can be set by user, by setting log file pathways in the Filebeat configuration file.
 
 Logstash identifies named fields from the logs it receieves, such as the log id or log time, and sends this data to Elasticsearch. Elasticsearch then packages the data into a JSON format and sends it to Kibana. Kibana then displays the information received from Elasticsearch as charts and graphs. The user can filter the logs on Kibana to display particular data, such as all metric data for a single database instance for example.
+
+## Setting Up The ELK Stack
+
+In order to incorporate the ELK Stack into the project, Cookbooks were created using Chef, containing Recipes to provision the instances that hold their part of the stack. Chef also allows us to run unit and integration tests on the Cookbooks, using ChefSpec and InSpec respectively.
+
+Here are the links to the Cookbook repositories on GitHub:
+
+Logstash: https://github.com/IvorL/logstash_cookbook  
+Elasticsearch:  https://github.com/Mhaventhan/ElasticsearchCookBook  
+Kibana: https://github.com/oceaneLonneux/kibanaCookbook   
+Beats: https://github.com/RCollettSG/BeatsCookbook  
+
+Each Cookbook contains a README explaining installation.
