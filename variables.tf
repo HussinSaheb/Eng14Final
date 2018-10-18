@@ -7,7 +7,7 @@ variable "app_ami" {
 }
 
 variable "db_ami" {
-  default = "ami-01bf83ef03da7405e"
+  default = "ami-0ed6a646933c4a4bc"
 }
 
 variable "ls_ami" {

@@ -60,6 +60,9 @@ data "template_file" "app_init" {
       # db_host3 = "${module.db.db_host3}"
    }
 }
+data "template_file" "db_init" {
+   template = "${file("./scripts/db/setup.sh.tpl")}"
+}
 
 module "elasticsearch" {
   source = "./modules/elasticsearch"
@@ -106,4 +109,5 @@ module "db" {
   app_sg = "${module.app.security_group_id}"
   app_subnet_cidr_block = "${module.app.subnet_cidr_block}"
   ig_id = "${aws_internet_gateway.app.id}"
+  user_data = "${data.template_file.db_init.rendered}"
 }

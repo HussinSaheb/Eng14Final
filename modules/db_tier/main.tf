@@ -6,7 +6,7 @@ resource "aws_route_table" "db" {
 }
 #DB
 resource "aws_instance" "Eng14DB1" {
-  ami = "ami-01bf83ef03da7405e"
+  ami = "ami-0ed6a646933c4a4bc"
   subnet_id = "${aws_subnet.db1.id}"
   security_groups = ["${aws_security_group.db.id}"]
   instance_type = "t2.micro"
@@ -15,10 +15,11 @@ resource "aws_instance" "Eng14DB1" {
   tags {
     Name = "Eng14DB1"
   }
+  user_data = "${var.user_data}"
 
 }
 resource "aws_instance" "Eng14DB2" {
-  ami = "ami-01bf83ef03da7405e"
+  ami = "ami-0ed6a646933c4a4bc"
   subnet_id = "${aws_subnet.db2.id}"
   security_groups = ["${aws_security_group.db.id}"]
   instance_type = "t2.micro"
@@ -29,7 +30,7 @@ resource "aws_instance" "Eng14DB2" {
   }
 }
 resource "aws_instance" "Eng14DB3" {
-  ami = "ami-01bf83ef03da7405e"
+  ami = "ami-0ed6a646933c4a4bc"
   subnet_id = "${aws_subnet.db3.id}"
   security_groups = ["${aws_security_group.db.id}"]
   instance_type = "t2.micro"

@@ -33,3 +33,6 @@ variable "app_sg" {
 variable "app_subnet_cidr_block" {
   description = "the app subnet cidr block"
 }
+variable "user_data" {
+  description = "the app subnet cidr block"
+}
