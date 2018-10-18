@@ -1,9 +1,4 @@
 # Eng14Final
-
-## What we have created?
-We have created a 2-tier architecture which contains 3 Mongodb instances and 3 Node App instances. The architecture is placed within 3 availability zones in AWS, each containing a database instance and an app instance. Each instance is provisioned through cookbooks created in Chef, which are tested through both unit tests and integration tests. We have also created 3 cookbooks to provision an ELK stack, each for the Elasticsearch, Logstack, Kibana. The ELK stack is used to help manage, monitor and analyse logs within the architecture. This would be useful for debugging the architecture, recording any errors made within it. For the database, we have made one of the three instances the primary database, which will take on all the database requests made by the app instances. The other database instances are made into secondaries, which will be used replicate the primary at all times and will replace the primary once the current primary has been corrupted.
-___
-<<<<<<< HEAD
 # Contents
 
 1. [ What we have created. ](#what-we-created)
@@ -21,10 +16,6 @@ We have created a 2-tier architecture which contains 3 Mongodb instances and 3 N
 
 ##  <a name="mongo-replica-set">Mongo Replica-set</a>
 
-=======
-
-## Mongo Replica-set
->>>>>>> 3c363d8fb00d6610c4aa657c99b5b8cd43a48369
 Our 2 tier architecture currently has a serious Single Point of Failure; the database tier.
 We currently only run a single instance in a single availability zone. If this were to fail we would not only have down time but we would also have a serious loss of data.
 Investigate how to create a replica set using mongo that allows three machines to replicate data and balance the load across three availability zones.
