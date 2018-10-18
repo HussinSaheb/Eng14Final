@@ -5,7 +5,7 @@ resource "aws_subnet" "app1" {
   vpc_id = "${var.vpc_id}"
   cidr_block = "10.1.0.0/24"
   map_public_ip_on_launch = true
-  availability_zone = "eu-west-1a"
+  availability_zone = "eu-west-3a"
   tags {
     Name = "${var.name}"
   }
@@ -15,7 +15,7 @@ resource "aws_subnet" "app2" {
   vpc_id = "${var.vpc_id}"
   cidr_block = "10.1.1.0/24"
   map_public_ip_on_launch = true
-  availability_zone = "eu-west-1b"
+  availability_zone = "eu-west-3b"
   tags {
     Name = "${var.name}"
   }
@@ -25,7 +25,7 @@ resource "aws_subnet" "app3" {
   vpc_id = "${var.vpc_id}"
   cidr_block = "10.1.2.0/24"
   map_public_ip_on_launch = true
-  availability_zone = "eu-west-1c"
+  availability_zone = "eu-west-3c"
   tags {
     Name = "${var.name}"
   }

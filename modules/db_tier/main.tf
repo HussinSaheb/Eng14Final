@@ -1,6 +1,12 @@
+resource "aws_route_table" "db" {
+  vpc_id = "${var.vpc_id}"
+  tags{
+    Name = "DB RT"
+  }
+}
 #DB
 resource "aws_instance" "Eng14DB1" {
-  ami = "ami-01c2032f7a7ffa4e2"
+  ami = "ami-01bf83ef03da7405e"
   subnet_id = "${aws_subnet.db1.id}"
   security_groups = ["${aws_security_group.db.id}"]
   instance_type = "t2.micro"
@@ -9,9 +15,10 @@ resource "aws_instance" "Eng14DB1" {
   tags {
     Name = "Eng14DB1"
   }
+
 }
 resource "aws_instance" "Eng14DB2" {
-  ami = "ami-01c2032f7a7ffa4e2"
+  ami = "ami-01bf83ef03da7405e"
   subnet_id = "${aws_subnet.db2.id}"
   security_groups = ["${aws_security_group.db.id}"]
   instance_type = "t2.micro"
@@ -22,7 +29,7 @@ resource "aws_instance" "Eng14DB2" {
   }
 }
 resource "aws_instance" "Eng14DB3" {
-  ami = "ami-01c2032f7a7ffa4e2"
+  ami = "ami-01bf83ef03da7405e"
   subnet_id = "${aws_subnet.db3.id}"
   security_groups = ["${aws_security_group.db.id}"]
   instance_type = "t2.micro"
@@ -87,6 +94,7 @@ resource "aws_security_group" "db" {
     from_port = "27017"
     to_port = "27017"
     protocol = "tcp"
+    cidr_blocks= ["0.0.0.0/0"]
     security_groups = ["${var.app_sg}"]
   }
 
@@ -94,14 +102,14 @@ resource "aws_security_group" "db" {
     from_port = "1025"
     to_port = "65535"
     protocol = "tcp"
-    cidr_blocks = ["10.1.0.0/16"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
     from_port = 0
     to_port = 0
     protocol = "-1"
-    cidr_blocks = ["10.1.0.0/16"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags {
@@ -117,7 +125,7 @@ resource "aws_network_acl" "db" {
     protocol = "tcp"
     rule_no = 100
     action = "allow"
-    cidr_block = "10.1.0.0/16"
+    cidr_block = "0.0.0.0/0"
     from_port = 27017
     to_port = 27017
   }
@@ -127,7 +135,7 @@ resource "aws_network_acl" "db" {
     protocol = "tcp"
     rule_no = 120
     action = "allow"
-    cidr_block = "10.1.0.0/16"
+    cidr_block = "0.0.0.0/0"
     from_port = 1024
     to_port = 65535
   }

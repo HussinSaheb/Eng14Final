@@ -1,6 +1,6 @@
 #setting the provider in this case AWS
 provider "aws" {
-  region ="eu-west-1"
+  region ="eu-west-3"
 }
 
 # 1 - terraform
@@ -46,7 +46,7 @@ resource "aws_subnet" "elk_stack" {
   vpc_id = "${aws_vpc.Eng14vpc.id}"
   cidr_block = "10.1.6.0/24"
   map_public_ip_on_launch = true
-  availability_zone = "eu-west-1a"
+  availability_zone = "eu-west-3a"
   tags {
     Name = "ELK_Stack_PubSN"
   }
@@ -56,8 +56,8 @@ data "template_file" "app_init" {
    template = "${file("./scripts/app/setup.sh.tpl")}"
    vars {
       db_host1 = "${module.db.db_host1}"
-      db_host2 = "${module.db.db_host2}"
-      db_host3 = "${module.db.db_host3}"
+      # db_host2 = "${module.db.db_host2}"
+      # db_host3 = "${module.db.db_host3}"
    }
 }
 
