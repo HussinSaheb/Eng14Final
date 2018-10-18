@@ -55,7 +55,9 @@ resource "aws_subnet" "elk_stack" {
 data "template_file" "app_init" {
    template = "${file("./scripts/app/setup.sh.tpl")}"
    vars {
-      ip = "${module.db.db_eip}"
+      db_host1 = "${module.db.db_host1}"
+      db_host2 = "${module.db.db_host2}"
+      db_host3 = "${module.db.db_host3}"
    }
 }
 

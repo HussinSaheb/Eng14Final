@@ -26,10 +26,6 @@ variable "ig_id" {
   description = "internet gateway"
 }
 
-# variable "user_data" {
-#   description = "the user data for db"
-# }
-
 variable "app_sg" {
   description = "the app security group"
 }
