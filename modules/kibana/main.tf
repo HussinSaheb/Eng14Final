@@ -37,6 +37,14 @@ resource "aws_security_group" "kb_app_sg"  {
   }
 }
 
+resource "aws_route53_record" "kibana" {
+  zone_id = "Z3CCIZELFLJ3SC"
+  name    = "kibana14.spartaglobal.education"
+  type    = "A"
+  ttl     = "300"
+  records = ["${aws_instance.kibana.public_ip}"]
+}
+
 resource "aws_instance" "kibana" {
   ami = "${var.ami_id}"
   subnet_id = "${var.subnet_id}"
