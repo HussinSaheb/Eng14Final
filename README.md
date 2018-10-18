@@ -13,6 +13,8 @@
 * [ Diagrams. ](#diagrams)
 * [ Multi AZ Project. ](#multi-az-app)
 * [ ELK Stack. ](#elk-stack)
+    1. [ What Is The ELK Stack? ](#what-is-elk)
+    1. [ The ELK Stack In This Project  ](#elk-in-project)
 
 ---
 
@@ -172,7 +174,7 @@ Log consolidation allows us to have logs files broadcast to a central repository
 The ELK stack is a commonly used system for this purpose.
 Research the setup of the elk stack and create a cookbook for provisioning the required machines.
 
-## What Is The ELK Stack?
+### <a name="what-is-elk">What Is The ELK Stack?</a>
 
 "ELK" is an acronym for three projects, Elasticsearch, Logstash, and Kibana, from the open-source company Elastic. Beats is also a part of the stack, not included in the acronym.
 
@@ -184,7 +186,7 @@ Elasticsearch is a RESTful, JSON-based search and analytics engine, which packag
 
 Kibana lets users visualise logs and system data with charts and graphs.
 
-## The ELK Stack In This Project
+### <a name="elk-in-project">The ELK Stack In This Project</a>
 
 FileBeat and MetricBeat have been installed on the Node App and Mongodb AWS instances, in order to monitor all machines.
 
