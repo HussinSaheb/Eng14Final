@@ -1,10 +1,35 @@
-
-#Private route table for the DB
-resource "aws_route_table" "db" {
-  vpc_id = "${var.vpc_id}"
-
+#DB
+resource "aws_instance" "Eng14DB1" {
+  ami = "ami-01c2032f7a7ffa4e2"
+  subnet_id = "${aws_subnet.db1.id}"
+  security_groups = ["${aws_security_group.db.id}"]
+  instance_type = "t2.micro"
+  availability_zone = "${var.region1}"
+  private_ip = "10.1.3.10"
   tags {
-    Name = "${var.name}-dbRT"
+    Name = "Eng14DB1"
+  }
+}
+resource "aws_instance" "Eng14DB2" {
+  ami = "ami-01c2032f7a7ffa4e2"
+  subnet_id = "${aws_subnet.db2.id}"
+  security_groups = ["${aws_security_group.db.id}"]
+  instance_type = "t2.micro"
+  availability_zone = "${var.region2}"
+  private_ip = "10.1.4.10"
+  tags {
+    Name = "Eng14DB2"
+  }
+}
+resource "aws_instance" "Eng14DB3" {
+  ami = "ami-01c2032f7a7ffa4e2"
+  subnet_id = "${aws_subnet.db3.id}"
+  security_groups = ["${aws_security_group.db.id}"]
+  instance_type = "t2.micro"
+  availability_zone = "${var.region3}"
+  private_ip = "10.1.5.10"
+  tags {
+    Name = "Eng14DB3"
   }
 }
 
@@ -52,9 +77,6 @@ resource "aws_route_table_association" "db3" {
   subnet_id     = "${aws_subnet.db3.id}"
   route_table_id = "${aws_route_table.db.id}"
 }
-
-
-
 #Security group for the DB
 resource "aws_security_group" "db" {
   name = "${var.name}-db"
@@ -69,8 +91,8 @@ resource "aws_security_group" "db" {
   }
 
   ingress {
-    from_port = "27017"
-    to_port = "27017"
+    from_port = "1025"
+    to_port = "65535"
     protocol = "tcp"
     cidr_blocks = ["10.1.0.0/16"]
   }
@@ -79,7 +101,7 @@ resource "aws_security_group" "db" {
     from_port = 0
     to_port = 0
     protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["10.1.0.0/16"]
   }
 
   tags {
@@ -115,65 +137,4 @@ resource "aws_network_acl" "db" {
   tags {
     Name = "${var.name}-db-Nacl"
   }
-}
-
-
-#Creating a launch configuration
-resource "aws_launch_configuration" "db" {
-  name = "${var.name}-tf-launch_configuration"
-  image_id = "${var.db_ami_id}"
-  instance_type = "t2.micro"
-  security_groups = ["${aws_security_group.db.id}"]
-  iam_instance_profile = "${aws_iam_instance_profile.ec2_profile.name}"
-  # user_data = "${var.user_data}"
-  provisioner "local-exec" {
-    command = "aws ec2 associate-address --instance-id $(curl http://169.254.169.254/latest/meta-data/instance-id) --allocation-id ${aws_eip.eip.id}"
-  }
-}
-
-#Creating the Autoscaling group
-resource "aws_autoscaling_group" "db" {
-  name = "db-tf-asg"
-  max_size = 3
-  min_size = 0
-  health_check_grace_period = 300
-  health_check_type = "ELB"
-  desired_capacity = 3
-  force_delete = true
-  launch_configuration = "${aws_launch_configuration.db.name}"
-  vpc_zone_identifier = ["${aws_subnet.db1.id}","${aws_subnet.db2.id}","${aws_subnet.db3.id}"]
-}
-
-# NAT & elastic_ip
-resource "aws_eip" "eip" {
-  vpc = true
-}
-
-
-resource "aws_iam_role" "ec2" {
-  name = "ec2"
-  assume_role_policy = <<EOF
-{
-      "Version": "2012-10-17",
-      "Statement": [
-        {
-          "Action": [
-            "ec2:DescribeAddress",
-            "ec2:AllocateAddress",
-            "ec2:DescribeInstance",
-            "ec2:AssociateAddress"
-          ],
-          "Principal": {
-            "Service": "ec2.amazonaws.com"
-          },
-          "Effect": "Allow"
-        }
-      ]
-  }
-EOF
-}
-
-resource "aws_iam_instance_profile" "ec2_profile" {
-  name = "ec2_profile"
-  role = "${aws_iam_role.ec2.name}"
 }
