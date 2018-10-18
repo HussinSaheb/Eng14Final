@@ -9,6 +9,8 @@
     1. [ How it works. ](#how-it-works)
         * [ To deploy the replica-set manually. ](#manual-replica)
 * [ Diagrams. ](#diagrams)
+1. [ What Is The ELK Stack? ](#what-is-elk)
+  1. [ The ELK Stack In This Project  ](#elk-in-project)
 
 ---
 
@@ -20,7 +22,7 @@ Initially we has one database inside an availability zone which made it prone to
  When creating the database to be autoscaled, we came across four solutions which would make the app connect to the database, but those solutions didn't work well as they were always giving us a bad gateway error message. These solutions are:
 
  #### <a name="solution-1"> Solution 1: Load Balancer</a>
- 
+
 Our first approach was to create a Load Balancer to get the IP of the primary database instance, as the autoscaled database instance didn't have an instance ID. This was an issue because without the instance ID we couldn't get the private IP of said database instance into the user data of the app. The way we got the IP of the primary database was using the Load Balancers DNS, but monogodb only accept ip's as a valid input. To get the DNS' IP we used this command in the user data file:
 ```
 nslookup [DNS link] | grep -i address:- | tail -1 | cut -c 10-
@@ -197,6 +199,9 @@ For the autoscaling to spin up instances across three different availability zon
 
 If the main availability zone was to fail, our App within the zone will also fail. With the other two zones being available, our app will be able to stay online. And because we have the autoscaling group configured to always have 3 instances running, another app instance will get deployed and replaced the one that has failed.
 
+
+
+---
 
 ## <a name="elk-stack">ELK STACK</a>
 Immutable architectures are notoriously difficult to debug because we no longer have access to the instances and thus do not have access to the logs for those machines.
