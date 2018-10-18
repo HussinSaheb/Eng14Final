@@ -1,5 +1,9 @@
 # Eng14Final
+
+## What we have created?
+We have created a 2-tier architecture which contains 3 Mongodb instances and 3 Node App instances. The architecture is placed within 3 availability zones in AWS, each containing a database instance and an app instance. Each instance is provisioned through cookbooks created in Chef, which are tested through both unit tests and integration tests. We have also created 3 cookbooks to provision an ELK stack, each for the Elasticsearch, Logstack, Kibana. The ELK stack is used to help manage, monitor and analyse logs within the architecture. This would be useful for debugging the architecture, recording any errors made within it. For the database, we have made one of the three instances the primary database, which will take on all the database requests made by the app instances. The other database instances are made into secondaries, which will be used replicate the primary at all times and will replace the primary once the current primary has been corrupted.
 ___
+<<<<<<< HEAD
 # Contents
 
 1. [ What we have created. ](#what-we-created)
@@ -17,6 +21,10 @@ We have created a 2-tier architecture which contains 3 Mongodb instances and 3 N
 
 ##  <a name="mongo-replica-set">Mongo Replica-set</a>
 
+=======
+
+## Mongo Replica-set
+>>>>>>> 3c363d8fb00d6610c4aa657c99b5b8cd43a48369
 Our 2 tier architecture currently has a serious Single Point of Failure; the database tier.
 We currently only run a single instance in a single availability zone. If this were to fail we would not only have down time but we would also have a serious loss of data.
 Investigate how to create a replica set using mongo that allows three machines to replicate data and balance the load across three availability zones.
@@ -44,40 +52,17 @@ If all requirements are met, run:
 terraform apply
 ```
 
-When terraform apply is executed successfully, go on AWS, get the public IP address from your Bastion server and ssh into it through your command prompt.
+When terraform apply is executed successfully, go on AWS, get the public IP address from your App instance and make a request to '/posts'.
 
-Make sure you have the relevant key imported onto your local environment.
+You should be able to see the posts page of the web application.
 
-Once you're inside the Bastion, ssh into the Primary DB instance with a private IP address that you can get from AWS instance lists.
+Now, to check if the replica-set is deployed correctly and is working, go on AWS and terminate the Primary DB instance. When reloading the posts page, you should still be able to see all the posts page.
 
-Inside, you should be able to ssh into the mongo shell with the following command:
-```
-mongo
-```
-
-With the provision of our mongo cookbook and the image we've created using packer, the replica-set should have already been deployed.
-
-To check if the replica-set exists, run:
-```
-rs.status()
-```
-
-That should then display a list of all the DBs, one should have a status of "Primary", and two should have a status of "Secondary".
-
-If none are displayed, it would mean that the replica-set has not been initialised, you would need to run:
-```
-rs.initiate({_id: "replSetName", members: [{_id: 0, host: "your db private IP address:27017"}]})
-```
-
-Once your Primary DB has successfully been initialised, you can then add the other two DBs to the replica-set as a Secondary member.
-```
-rs.add({_id: 1, host: "your second db private IP address:27017"}, {_id: 2, host: "your third db private IP address:27017"})
-```
-Once the two are added to the replica-set successfully, when you run 'rs.status()', you should now be able to see all three members of the set, one Primary and two Secondaries.
+This is because when the Primary goes down, the other two Secondary members will undergo an 'election'. The member with a healthier state will get elected as the new Primary.
 
 #### <a name="manual-replica">To deploy the replica-set manually</a>
 
-This is what our mongo cookbook will automatically do for us. Only do the following if you are setting everything up from scratch.
+This is what our mongo cookbook AMI will automatically do for you. Only do the following if you are not using the available AMI.
 ```
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
 ```
@@ -119,6 +104,63 @@ or
 sudo nano /etc/mongod.conf
 ```
 Inside the file, you will need to make sure that under 'Net Interface', it should have the following lines:
+
+```
+net:
+  port: 27017
+  bindIp: 0.0.0.0
+```
+Port 27017 is the default port for MongoDB, and since we will be using several hosts which will ensure that MongoDB will listen for connections from applications on your configured addresses.
+
+Under 'Replication', it should have the following lines:
+```
+replication:
+  replSetName: Eng14
+```
+This is so that your replica-set members will fall under the same replica group.
+
+Once you are done making the change to the mongod.conf file, save and exit from there and restart the mongod service with the following command:
+```
+sudo systemctl restart mongod
+```
+
+Now ssh into the mongo shell with the following command:
+```
+mongo
+```
+
+With the provision of our mongo cookbook and the image we've created using packer, the replica-set should have already been deployed.
+
+To check if the replica-set exists, run:
+```
+rs.status()
+```
+
+That should then display a list of all the DBs, one should have a status of "Primary", and two should have a status of "Secondary".
+
+If none are displayed, it would mean that the replica-set has not been initialised, you would need to run:
+```
+rs.initiate({_id: "replSetName", members: [{_id: 0, host: "your db private IP address:27017"}]})
+```
+
+Once your Primary DB has successfully been initialised, you can then add the other two DBs to the replica-set as a Secondary member.
+```
+rs.add({_id: 1, host: "your second db private IP address:27017"}, {_id: 2, host: "your third db private IP address:27017"})
+```
+Once the two are added to the replica-set successfully, when you run 'rs.status()', you should now be able to see all three members of the set, one Primary and two Secondaries.
+
+To ensure that whatever is written onto the Primary member get replicated to the Secondary members, you need to setup a master-slave relationship for the set.
+Exit the mongo shell.
+
+```
+mongod --master --dbpath /data/masterdb/
+```
+This command should be run inside the Primary virtual environment.
+
+```
+mongod --slave --source <hostname><:<port>> --dbpath /data/slavedb/
+```
+This command will set the other two members as a slave.
 
 ___
 
