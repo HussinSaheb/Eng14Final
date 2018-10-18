@@ -42,7 +42,7 @@ This is because when the Primary goes down, the other two Secondary members will
 
 #### To deploy the replica-set manually:
 
-This is what our mongo cookbook will automatically do for us. Only do the following if you are setting everything up from scratch.
+This is what our mongo cookbook AMI will automatically do for you. Only do the following if you are not using the available AMI.
 ```
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
 ```
@@ -128,6 +128,19 @@ Once your Primary DB has successfully been initialised, you can then add the oth
 rs.add({_id: 1, host: "your second db private IP address:27017"}, {_id: 2, host: "your third db private IP address:27017"})
 ```
 Once the two are added to the replica-set successfully, when you run 'rs.status()', you should now be able to see all three members of the set, one Primary and two Secondaries.
+
+To ensure that whatever is written onto the Primary member get replicated to the Secondary members, you need to setup a master-slave relationship for the set.
+Exit the mongo shell.
+
+```
+mongod --master --dbpath /data/masterdb/
+```
+This command should be run inside the Primary virtual environment.
+
+```
+mongod --slave --source <hostname><:<port>> --dbpath /data/slavedb/
+```
+This command will set the other two members as a slave.
 
 ___
 
