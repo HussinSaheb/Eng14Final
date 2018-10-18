@@ -12,5 +12,14 @@ ___
 |![alt text](Images/Diagram1.jpg) - ![alt text](Images/Diagram3.jpg)|This shows the plan made in creating the replica set for the architecture.|
 | ![alt text](Images/Diagram2.jpg)|This shows the plan made in planning the VPC for the database instances and where to put them within AWS.|
 |![alt text](Images/Diagram4.jpg)| This is the plan of linking the ELK stack to the app and database.|
+-----
 
+
+## How to run the architecture?
+### Home
+To access the app within the 2 tier architecture, in your web browser, search for the following URL:
+```
+eng14app-app-elb-4165f30c978b2a7a.elb.eu-west-1.amazonaws.com
+```
+You will the be able to
 ![alt text](Images/webpage.png)
