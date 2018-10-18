@@ -251,6 +251,10 @@ Elasticsearch is a RESTful, JSON-based search and analytics engine, which packag
 
 Kibana lets users visualise logs and system data with charts and graphs.
 
+Bellow is the diagram of our ELK stack architecture:
+
+![ELK Stacks Architecture Diagram](Images/ELK_Stack.png)
+
 ## <a name="elk-in-project">The ELK Stack In This Project</a>
 
 FileBeat and MetricBeat have been installed on the Node App and Mongodb AWS instances, in order to monitor all machines.
