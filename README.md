@@ -13,6 +13,7 @@
         * [ To deploy the replica-set manually. ](#manual-replica)
 * [ Diagrams. ](#diagrams)
 * [ Multi AZ Project. ](#multi-az-app)
+    1. [ Deployment. ](#deployment)
 * [ ELK Stack. ](#elk-stack)
     1. [ What Is The ELK Stack? ](#what-is-elk)
     1. [ The ELK Stack In This Project.  ](#elk-in-project)
@@ -56,12 +57,9 @@ Initially we has one database inside an availability zone which made it prone to
 
 ![Database Replica Set Architecture Diagram](Images/DB_Replica_set.png)
 
-### <a name="database"> Database </a>
-Initially we has one database inside an availability zone which made it prone to crashes which in turn would create down time for the database. To resolve this issue we had an EC2 instance inside all of the availability zones (eu-west-1a, eu-west-1b and eu-west-1c) that can automatically recover from a database failure. For example, if you are running a database in eu-west-1a and that database goes down the app would use another database inside the other 2 availability zones until the crashed database is booted up again.
- When creating the database to be autoscaled, we came across four solutions which would make the app connect to the database, but those solutions didn't work well as they were always giving us a bad gateway error message. These solutions are:
+When creating the database to be autoscaled, we came across four solutions which would make the app connect to the database, but those solutions didn't work well as they were always giving us a bad gateway error message. These solutions are:
 
- #### <a name="solution-1"> Solution 1: Load Balancer</a>
-
+#### <a name="solution-1"> Solution 1: Load Balancer</a>
 Our first approach was to create a Load Balancer to get the IP of the primary database instance, as the autoscaled database instance didn't have an instance ID. This was an issue because without the instance ID we couldn't get the private IP of said database instance into the user data of the app. The way we got the IP of the primary database was using the Load Balancers DNS, but monogodb only accept ip's as a valid input. To get the DNS' IP we used this command in the user data file:
 ```
 nslookup [DNS link] | grep -i address:- | tail -1 | cut -c 10-
@@ -70,7 +68,15 @@ This command filtered the output we got from the nslookup to only display the IP
 
 #### <a name="solution-2"> Solution 2: EIP</a>
 Our second approach was to add an EIP to our instance, but there was an issue where we couldn't get the instance ID because the database instances were made with an autoscaler. The way we added associated the EIP with the instance is by adding a nat gateway inside the public subnet which shadows the databases private subnet. This way was easier to assign IP's in the user data, as we can directly access the EIP.
- When connecting to the database through the app we encountered the same problem we had with solution 1. we were received a 502 bad gateway error. The cause of this was the fact that the EIP wasn't the right one to allow connection to the database.
+
+When connecting to the database through the app we encountered the same problem we had with solution 1. we were received a 502 bad gateway error. The cause of this was the fact that the EIP wasn't the right one to allow connection to the database.
+
+
+#### <a name="solution-3"> Solution 3: </a>
+
+
+#### <a name="final-solution"> Final Solution: </a>
+
 
 ##  <a name="mongo-replica-set">Mongo Replica-set</a>
 
@@ -220,8 +226,6 @@ ___
 | ![alt text](Images/Diagram2.jpg)|This shows the plan made in planning the VPC for the database instances and where to put them within AWS.|
 |![alt text](Images/Diagram4.jpg)| This is the plan of linking the ELK stack to the app and database.|
 
-
-
 -----
 
 ##  <a name="multi-az-app">Multi AZ Project</a>
@@ -229,7 +233,7 @@ Using Terraform and AWS create a load balanced and autoscaled 2 tier architectur
 The Architecture should be a "Highly Available" application. Meaning that it has redundancies across all three availability zones.
 The application should connect to a single database instance.
 
-#### Deployment
+####  <a name="deployment">Deployment</a>
 To deploy multiple instances in multiple availability zones, we've created an autoscaling group resource on Terraform, and configured it so that there is always 3 App instances running if one was to go down. This is to have the app architecture as a "Highly Available" application.
 
 For the App, you will need to make sure that you are using the correct Node ami_id, which is **ami-04daf51b01dbbf693**.
