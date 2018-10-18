@@ -15,6 +15,18 @@
 ## <a name="what-we-created"> What we have created?</a>
 We have created a 2-tier architecture which contains 3 Mongodb instances and 3 Node App instances. The architecture is placed within 3 availability zones in AWS, each containing a database instance and an app instance. Each instance is provisioned through cookbooks created in Chef, which are tested through both unit tests and integration tests. We have also created 3 cookbooks to provision an ELK stack, each for the Elasticsearch, Logstack, Kibana. The ELK stack is used to help manage, monitor and analyse logs within the architecture. This would be useful for debugging the architecture, recording any errors made within it. For the database, we have made one of the three instances the primary database, which will take on all the database requests made by the app instances. The other database instances are made into secondaries, which will be used replicate the primary at all times and will replace the primary once the current primary has been corrupted.
 
+### <a name="database"> Database </a>
+Initially we has one database inside an availability zone which made it prone to crashes which in turn would create down time for the database. To resolve this issue we had an EC2 instance inside all of the availability zones (eu-west-1a, eu-west-1b and eu-west-1c) that can automatically recover from a database failure. For example, if you are running a database in eu-west-1a and that database goes down the app would use another database inside the other 2 availability zones until the crashed database is booted up again.
+ When creating the database to be autoscaled, we came across four solutions which would make the app connect to the database, but those solutions didn't work well as they were always giving us a bad gateway error message. These solutions are:
+
+ #### <a name="solution-1"> Solution 1: Load Balancer</a>
+ 
+Our first approach was to create a Load Balancer to get the IP of the primary database instance, as the autoscaled database instance didn't have an instance ID. This was an issue because without the instance ID we couldn't get the private IP of said database instance into the user data of the app. The way we got the IP of the primary database was using the Load Balancers DNS, but monogodb only accept ip's as a valid input. To get the DNS' IP we used this command in the user data file:
+```
+nslookup [DNS link] | grep -i address:- | tail -1 | cut -c 10-
+```
+This command filtered the output we got from the nslookup to only display the IP. The IP was added to the db_host, but after trying out the APP to see if it could connect to the database, we received a 502 bad gateway error. The cause of this was the fact that the DNS ip of the load balancer wasn't the right one to allow connection to the database.
+
 #### <a name="solution-2"> Solution 2: EIP</a>
 Our second approach was to add an EIP to our instance, but there was an issue where we couldn't get the instance ID because the database instances were made with an autoscaler. The way we added associated the EIP with the instance is by adding a nat gateway inside the public subnet which shadows the databases private subnet. This way was easier to assign IP's in the user data, as we can directly access the EIP.
  When connecting to the database through the app we encountered the same problem we had with solution 1. we were received a 502 bad gateway error. The cause of this was the fact that the EIP wasn't the right one to allow connection to the database.
