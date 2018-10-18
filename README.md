@@ -228,13 +228,11 @@ The application should connect to a single database instance.
 ####  <a name="deployment">Deployment</a>
 To deploy multiple instances in multiple availability zones, we've created an autoscaling group resource on Terraform, and configured it so that there is always 3 App instances running if one was to go down. This is to have the app architecture as a "Highly Available" application.
 
-For the App, you will need to make sure that you are using the correct Node ami_id, which is **ami-04daf51b01dbbf693**.
+For the App, you will need to use our node cookbook: https://github.com/RCollettSG/ChefNodeCookbook.
 
-For the autoscaling to spin up instances across three different availability zones, we have created three subnets, three route tables and three route table associations, one for each of them. This is so that when the instances are spun up, they will have its own subnets for different availability zones.
+For the autoscaling to spin up instances across three different availability zones. We have created three subnets, three route tables and three route table associations, one for each of them. This is so that when the instances are spun up, they will have its own subnets for different availability zones.
 
-If the main availability zone was to fail, our App within the zone will also fail. With the other two zones being available, our app will be able to stay online. And because we have the autoscaling group configured to always have 3 instances running, another app instance will get deployed and replaced the one that has failed.
-
-
+We also have a load balancer setup to redirect traffic to the remaining online app servers. If the main availability zone was to fail, our App within the zone will also fail. With the other two zones being available, our app will be able to stay online. And because we have the autoscaling group configured to always have 3 instances running, another app instance will get deployed and replaced the one that has failed.
 
 ---
 
