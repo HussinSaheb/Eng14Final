@@ -89,32 +89,19 @@ To deploy a replica-set, we need to make sure that mongo is installed and mongod
 Here is the link to our mongo cookbook:
 https://github.com/RCollettSG/ChefMongoCookbook
 
-
-Once everything is correctly setup, run:  
-```
-terraform init
-```
-
-This is to initialise a working directory containing our Terraform configuration files.
-
-If terraform is initialised correctly, run:
-```
-terraform plan
-```
-This is to create an execution plan for you to see if everything in your terraform files meet all the requirements.
-
-If all requirements are met, run:
-```
-terraform apply
-```
-
 When terraform apply is executed successfully, go on AWS, get the public IP address from your App instance and make a request to '/posts'.
 
 You should be able to see the posts page of the web application.
 
-Now, to check if the replica-set is deployed correctly and is working, go on AWS and terminate the Primary DB instance. When reloading the posts page, you should still be able to see all the posts page.
+To check if the replica-set is deployed correctly and is working, go on AWS and terminate the Primary DB instance. When reloading the posts page, you should still be able to see all the posts page.
 
-This is because when the Primary goes down, the other two Secondary members will undergo an 'election'. The member with a healthier state will get elected as the new Primary.
+This is because when the Primary goes down, the other two Secondary members will undergo an 'election'. The member with the healthiest state will get elected as the new Primary.
+
+![Replica-set diagram](Images/replicaset-db.svg)
+
+Replica-set will always make sure that there is one Primary and two Secondary members within the set.
+
+![Replica-set diagram](Images/replicaset-electrion.svg)
 
 #### <a name="manual-replica">To deploy the replica-set manually</a>
 
