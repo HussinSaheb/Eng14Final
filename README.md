@@ -84,6 +84,12 @@ We currently only run a single instance in a single availability zone. If this w
 Investigate how to create a replica set using mongo that allows three machines to replicate data and balance the load across three availability zones.
 
 ### <a name="how-it-works">how it works</a>
+![Replica-set diagram](Images/replicaset-db.svg)
+Everything that is being written onto the primary set will get recored into the oplog. Then the secondary members will replicate this log and apply all operations into their data sets as it is not possible to write onto them directly; the secondaries can only be given a read access. If the primary set goes down, the replica sets will use "elections"  to determine the next primary set. We can configure it and set a timeout condition for the primary set. If it exceeds the configured timeout, then it will trigger something called a "failover process". One of the secondaries with the highest 'priority' (a number that will indicate which set is more eligible to become the next primary) available will call for an "election" to select a new primary.
+And we can change the hostname of a replica member without changing the configuration, so when a new primary is elected, the unique hostname given to that set becomes the new primary. And we can maybe setup an autoscaling so that there's always 3 sets of MongoDB. An arbiter can also be set up to auto replace the failed primary set when a new primary get selected, and when the autoscaling spin up a new duplicate, the arbiter will get pushed back and replaced by that.
+
+#### Deployment
+
 To deploy a replica-set, we need to make sure that mongo is installed and mongod service is running. So we made a mongo cookbook that would allowed us to create an AMI with packer to make sure that all DB instances have the two requirements to deploy a replica-set.
 
 Here is the link to our mongo cookbook:
@@ -96,8 +102,6 @@ You should be able to see the posts page of the web application.
 To check if the replica-set is deployed correctly and is working, go on AWS and terminate the Primary DB instance. When reloading the posts page, you should still be able to see all the posts page.
 
 This is because when the Primary goes down, the other two Secondary members will undergo an 'election'. The member with the healthiest state will get elected as the new Primary.
-
-![Replica-set diagram](Images/replicaset-db.svg)
 
 Replica-set will always make sure that there is one Primary and two Secondary members within the set.
 
