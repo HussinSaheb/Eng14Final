@@ -86,7 +86,9 @@ Investigate how to create a replica set using mongo that allows three machines t
 ### <a name="how-it-works">how it works</a>
 To deploy a replica-set, we need to make sure that mongo is installed and mongod service is running. So we made a mongo cookbook that would allowed us to create an AMI with packer to make sure that all DB instances have the two requirements to deploy a replica-set.
 
-If using our mongo cookbook, you need to make sure that in your terraform file, you are using our mongo ami_id, which is **ami-09633d8dbaabb2df5**.
+Here is the link to our mongo cookbook:
+https://github.com/RCollettSG/ChefMongoCookbook
+
 
 Once everything is correctly setup, run:  
 ```
@@ -232,6 +234,9 @@ For the autoscaling to spin up instances across three different availability zon
 
 If the main availability zone was to fail, our App within the zone will also fail. With the other two zones being available, our app will be able to stay online. And because we have the autoscaling group configured to always have 3 instances running, another app instance will get deployed and replaced the one that has failed.
 
+
+
+---
 
 ## <a name="elk-stack">ELK STACK</a>
 Immutable architectures are notoriously difficult to debug because we no longer have access to the instances and thus do not have access to the logs for those machines.
