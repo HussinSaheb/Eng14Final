@@ -101,7 +101,7 @@ or
 ```
 sudo nano /etc/mongod.conf
 ```
-Inside the file, you will need to make sure that under 'Net Interface', it should have the following lines: 
+Inside the file, you will need to make sure that under 'Net Interface', it should have the following lines:
 
 ___
 
@@ -113,12 +113,13 @@ ___
 |![alt text](Images/Diagram4.jpg)| This is the plan of linking the ELK stack to the app and database.|
 -----
 
+## Multi AZ Project
+Using Terraform and AWS create a load balanced and autoscaled 2 tier architecture for the node example application.
+The Architecture should be a "Highly Available" application. Meaning that it has redundancies across all three availabililty zones.
+The application should connect to a single database instance.
 
-## How to run the architecture?
-### Home
-To access the app within the 2 tier architecture, in your web browser, search for the following URL:
-```
-eng14app-app-elb-4165f30c978b2a7a.elb.eu-west-1.amazonaws.com
-```
-You will be able to see this once you enter the DNS name.
-![alt text](Images/Webpage.png)
+## ELK STACK
+Immutable architectures are notoriously difficult to debug because we no longer have access to the instances and thus do not have access to the logs for those machines.
+Log consolidation allows us to have logs files broadcast to a central repository by the instances themselves which allows us to more easily view them.
+The ELK stack is a commonly used system for this purpose.
+Research the setup of the elk stack and create a cookbook for provisioning the required machines.
