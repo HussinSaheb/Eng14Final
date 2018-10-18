@@ -5,7 +5,7 @@ resource "aws_instance" "Eng14DB1" {
   security_groups = ["${aws_security_group.db.id}"]
   instance_type = "t2.micro"
   availability_zone = "${var.region1}"
-  private_ip = "10.1.3.10/32"
+  private_ip = "10.1.3.10"
   tags {
     Name = "Eng14DB1"
   }
@@ -16,7 +16,7 @@ resource "aws_instance" "Eng14DB2" {
   security_groups = ["${aws_security_group.db.id}"]
   instance_type = "t2.micro"
   availability_zone = "${var.region2}"
-  private_ip = "10.1.4.11/32"
+  private_ip = "10.1.4.10"
   tags {
     Name = "Eng14DB2"
   }
@@ -27,7 +27,7 @@ resource "aws_instance" "Eng14DB3" {
   security_groups = ["${aws_security_group.db.id}"]
   instance_type = "t2.micro"
   availability_zone = "${var.region3}"
-  private_ip = "10.1.5.12/32"
+  private_ip = "10.1.5.10"
   tags {
     Name = "Eng14DB3"
   }
