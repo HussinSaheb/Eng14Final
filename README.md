@@ -1,5 +1,13 @@
 # Eng14Final
 ___
+
+1. [ What we have created. ](#what-we-created)
+
+
+
+## What we have created?
+We have created a 2-tier architecture which contains 3 Mongodb instances and 3 Node App instances. The architecture is placed within 3 availability zones in AWS, each containing a database instance and an app instance. Each instance is provisioned through cookbooks created in Chef, which are tested through both unit tests and integration tests. We have also created 3 cookbooks to provision an ELK stack, each for the Elasticsearch, Logstack, Kibana. The ELK stack is used to help manage, monitor and analyse logs within the architecture. This would be useful for debugging the architecture, recording any errors made within it. For the database, we have made one of the three instances the primary database, which will take on all the database requests made by the app instances. The other database instances are made into secondaries, which will be used replicate the primary at all times and will replace the primary once the current primary has been corrupted.
+
 ## Mongo Replica-set
 Our 2 tier architecture currently has a serious Single Point of Failure; the database tier.
 We currently only run a single instance in a single availability zone. If this were to fail we would not only have down time but we would also have a serious loss of data.
@@ -59,6 +67,8 @@ rs.add({_id: 1, host: "your second db private IP address:27017"}, {_id: 2, host:
 ```
 Once the two are added to the replica-set successfully, when you run 'rs.status()', you should now be able to see all three members of the set, one Primary and two Secondaries.
 
+<a name="what-we-created"><h1> What we have created?</h1></a>
+
 #### To deploy the replica-set manually:
 
 This is what our mongo cookbook will automatically do for us. Only do the following if you are setting everything up from scratch.
@@ -113,8 +123,7 @@ ___
 | ![alt text](Images/Diagram2.jpg)|This shows the plan made in planning the VPC for the database instances and where to put them within AWS.|
 |![alt text](Images/Diagram4.jpg)| This is the plan of linking the ELK stack to the app and database.|
 
-## What we have created?
-We have created a 2-tier architecture which contains 3 Mongodb instances and 3 Node App instances. The architecture is placed within 3 availability zones in AWS, each containing a database instance and an app instance. Each instance is provisioned through cookbooks created in Chef, which are tested through both unit tests and integration tests. We have also created 3 cookbooks to provision an ELK stack, each for the Elasticsearch, Logstack, Kibana. The ELK stack is used to help manage, monitor and analyse logs within the architecture. This would be useful for debugging the architecture, recording any errors made within it. For the database, we have made one of the three instances the primary database, which will take on all the database requests made by the app instances. The other database instances are made into secondaries, which will be used replicate the primary at all times and will replace the primary once the current primary has been corrupted.
+
 
 -----
 
