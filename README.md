@@ -3,8 +3,8 @@
 
 1. [ What we have created. ](#what-we-created)
 1. [ Mongo Replica-set. ](#mongo-replica-set)
-  1. [ How it works. ](#how-it-works)
-    1. [ To deploy the replica-set manually. ](#manual-replica)
+    1. [ How it works. ](#how-it-works)
+      1. [ To deploy the replica-set manually. ](#manual-replica)
 1. [ Diagrams. ](#diagrams)
 1. [ Multi AZ Project. ](#multi-az-app)
 1. [ ELK Stack. ](#elk-stack)
