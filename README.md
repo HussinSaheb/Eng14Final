@@ -1,6 +1,9 @@
 # Eng14Final
 ___
-
+## Mongo Replica-set
+Our 2 tier architecture currently has a serious Single Point of Failure; the database tier.
+We currently only run a single instance in a single availability zone. If this were to fail we would not only have down time but we would also have a serious loss of data.
+Investigate how to create a replica set using mongo that allows three machines to replicate data and balance the load across three availability zones.
 
 ### How it works
 To deploy a replica-set, we need to make sure that mongo is installed and mongod service is running. So we made a mongo cookbook that would allowed us to create an AMI with packer to make sure that all DB instances have the two requirements to deploy a replica-set.
