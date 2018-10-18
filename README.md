@@ -1,14 +1,10 @@
 # Eng14Final
 # Contents
 
-<<<<<<< HEAD
 * [ What we have created. ](#what-we-created)
 * [ How to run the project. ](#how-to-run)
 * [ Mongo Replica-set. ](#mongo-replica-set)
     1. [ Database. ](#database)
-=======
-1. [ Database. ](#database)
->>>>>>> e18db07edb67309c0beb0770f072c00debffbdb8
         * [ Solution 1: Load Balancer. ](#solution-1)
         * [ Solution 2: EIP. ](#solution-2)
         * [ Solution 3: ](#solution-3)
@@ -16,20 +12,16 @@
     1. [ How it works. ](#how-it-works)
         * [ To deploy the replica-set manually. ](#manual-replica)
 * [ Diagrams. ](#diagrams)
-<<<<<<< HEAD
 * [ Multi AZ Project. ](#multi-az-app)
 * [ ELK Stack. ](#elk-stack)
     1. [ What Is The ELK Stack? ](#what-is-elk)
     1. [ The ELK Stack In This Project.  ](#elk-in-project)
-=======
->>>>>>> e18db07edb67309c0beb0770f072c00debffbdb8
 
 ---
 
 ## <a name="what-we-created"> What we have created?</a>
 We have created a 2-tier architecture which contains 3 Mongodb instances and 3 Node App instances. The architecture is placed within 3 availability zones in AWS, each containing a database instance and an app instance. Each instance is provisioned through cookbooks created in Chef, which are tested through both unit tests and integration tests. We have also created 3 cookbooks to provision an ELK stack, each for the Elasticsearch, Logstack, Kibana. The ELK stack is used to help manage, monitor and analyse logs within the architecture. This would be useful for debugging the architecture, recording any errors made within it. For the database, we have made one of the three instances the primary database, which will take on all the database requests made by the app instances. The other database instances are made into secondaries, which will be used replicate the primary at all times and will replace the primary once the current primary has been corrupted.
 
-<<<<<<< HEAD
 ##  <a name="how-to-run">How to run the project</a>
 To run the project on your own machine you would need to do the following:
 1. Clone the repository inside your chosen directory.
@@ -63,14 +55,13 @@ Investigate how to create a replica set using mongo that allows three machines t
 Initially we has one database inside an availability zone which made it prone to crashes which in turn would create down time for the database. To resolve this issue we had an EC2 instance inside all of the availability zones (eu-west-1a, eu-west-1b and eu-west-1c) that can automatically recover from a database failure, you can see the architecture diagram bellow. For example, if you are running a database in eu-west-1a and that database goes down the app would use another database inside the other 2 availability zones until the crashed database is booted up again.
 
 ![Database Replica Set Architecture Diagram](Images/DB_Replica_set.png)
-=======
+
 ### <a name="database"> Database </a>
 Initially we has one database inside an availability zone which made it prone to crashes which in turn would create down time for the database. To resolve this issue we had an EC2 instance inside all of the availability zones (eu-west-1a, eu-west-1b and eu-west-1c) that can automatically recover from a database failure. For example, if you are running a database in eu-west-1a and that database goes down the app would use another database inside the other 2 availability zones until the crashed database is booted up again.
  When creating the database to be autoscaled, we came across four solutions which would make the app connect to the database, but those solutions didn't work well as they were always giving us a bad gateway error message. These solutions are:
->>>>>>> e18db07edb67309c0beb0770f072c00debffbdb8
 
  #### <a name="solution-1"> Solution 1: Load Balancer</a>
- 
+
 Our first approach was to create a Load Balancer to get the IP of the primary database instance, as the autoscaled database instance didn't have an instance ID. This was an issue because without the instance ID we couldn't get the private IP of said database instance into the user data of the app. The way we got the IP of the primary database was using the Load Balancers DNS, but monogodb only accept ip's as a valid input. To get the DNS' IP we used this command in the user data file:
 ```
 nslookup [DNS link] | grep -i address:- | tail -1 | cut -c 10-
@@ -253,3 +244,25 @@ Immutable architectures are notoriously difficult to debug because we no longer 
 Log consolidation allows us to have logs files broadcast to a central repository by the instances themselves which allows us to more easily view them.
 The ELK stack is a commonly used system for this purpose.
 Research the setup of the elk stack and create a cookbook for provisioning the required machines.
+
+## <a name="what-is-elk">What Is The ELK Stack?</a>
+
+"ELK" is an acronym for three projects, Elasticsearch, Logstash, and Kibana, from the open-source company Elastic. Beats is also a part of the stack, not included in the acronym.
+
+Filebeat and MetricBeats, part of the Beats family, are used to forward logs and system metrics, such as CPU and memory data, to Logstash.
+
+Logstash is a data processing pipeline that ingests data from multiple sources, transforms it, and then sends it to Elasticsearch.
+
+Elasticsearch is a RESTful, JSON-based search and analytics engine, which packages the data from Logstash into a JSON format to be sent to Kibana.
+
+Kibana lets users visualise logs and system data with charts and graphs.
+
+## <a name="elk-in-project">The ELK Stack In This Project</a>
+
+FileBeat and MetricBeat have been installed on the Node App and Mongodb AWS instances, in order to monitor all machines.
+
+Logstash, Elasticsearch and Kibana have been installed on three separate AWS instances to store, manipulate and display log data for the user.
+
+Filebeat sends logs from the Node App and Mongodb instances to Logstash. MetricBeat sends system metrics from those instances to Logstash as well. The type of logs that Filebeat sends can be set by user, by setting log file pathways in the Filebeat configuration file.
+
+Logstash identifies named fields from the logs it receieves, such as the log id or log time, and sends this data to Elasticsearch. Elasticsearch then packages the data into a JSON format and sends it to Kibana. Kibana then displays the information received from Elasticsearch as charts and graphs. The user can filter the logs on Kibana to display particular data, such as all metric data for a single database instance for example.
