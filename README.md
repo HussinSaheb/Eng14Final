@@ -11,7 +11,6 @@
         * [ Final Solution: ](#final-solution)
     1. [ How it works. ](#how-it-works)
         * [ To deploy the replica-set manually. ](#manual-replica)
-* [ Diagrams. ](#diagrams)
 * [ Multi AZ Project. ](#multi-az-app)
     1. [ Deployment. ](#deployment)
 * [ ELK Stack. ](#elk-stack)
@@ -216,15 +215,6 @@ This command should be run inside the Primary virtual environment.
 mongod --slave --source <hostname><:<port>> --dbpath /data/slavedb/
 ```
 This command will set the other two members as a slave.
-
-___
-
-## <a name="diagrams">Diagrams</a>
-| ![alt text](Images/NodeApp.png)| This is the diagram of the architecture, made using  https://cloudcraft.co/. This gives the overview of the architecture. |
-| ------------- |:-------------:|
-|![alt text](Images/Diagram1.jpg) - ![alt text](Images/Diagram3.jpg)|This shows the plan made in creating the replica set for the architecture.|
-| ![alt text](Images/Diagram2.jpg)|This shows the plan made in planning the VPC for the database instances and where to put them within AWS.|
-|![alt text](Images/Diagram4.jpg)| This is the plan of linking the ELK stack to the app and database.|
 
 -----
 
