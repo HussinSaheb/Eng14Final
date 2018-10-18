@@ -171,6 +171,8 @@ Using Terraform and AWS create a load balanced and autoscaled 2 tier architectur
 The Architecture should be a "Highly Available" application. Meaning that it has redundancies across all three availabililty zones.
 The application should connect to a single database instance.
 
+#### Deployment
+
 ## <a name="elk-stack">ELK STACK</a>
 Immutable architectures are notoriously difficult to debug because we no longer have access to the instances and thus do not have access to the logs for those machines.
 Log consolidation allows us to have logs files broadcast to a central repository by the instances themselves which allows us to more easily view them.
