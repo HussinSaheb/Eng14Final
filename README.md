@@ -4,7 +4,7 @@
 * [ What we have created. ](#what-we-created)
 * [ Mongo Replica-set. ](#mongo-replica-set)
     1. [ How it works. ](#how-it-works)
-      * [ To deploy the replica-set manually. ](#manual-replica)
+        * [ To deploy the replica-set manually. ](#manual-replica)
 * [ Diagrams. ](#diagrams)
 * [ Multi AZ Project. ](#multi-az-app)
 * [ ELK Stack. ](#elk-stack)
