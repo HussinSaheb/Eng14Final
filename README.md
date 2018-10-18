@@ -23,7 +23,7 @@ Investigate how to create a replica set using mongo that allows three machines t
 ### <a name="how-it-works">how it works</a>
 To deploy a replica-set, we need to make sure that mongo is installed and mongod service is running. So we made a mongo cookbook that would allowed us to create an AMI with packer to make sure that all DB instances have the two requirements to deploy a replica-set.
 
-If using our mongo cookbook, you need to make sure that in your terraform file, you are using our mongo ami_id, which is **ami-0c388e9d21eea5bd5**.
+If using our mongo cookbook, you need to make sure that in your terraform file, you are using our mongo ami_id, which is **ami-09633d8dbaabb2df5**.
 
 Once everything is correctly setup, run:  
 ```
@@ -168,16 +168,14 @@ ___
 
 ##  <a name="multi-az-app">Multi AZ Project</a>
 Using Terraform and AWS create a load balanced and autoscaled 2 tier architecture for the node example application.
-The Architecture should be a "Highly Available" application. Meaning that it has redundancies across all three availabililty zones.
+The Architecture should be a "Highly Available" application. Meaning that it has redundancies across all three availability zones.
 The application should connect to a single database instance.
 
 #### Deployment
-<<<<<<< HEAD
-=======
-For the deployment of the app minstances to multiple availability zones, all the configurations are done through terraform.
+To deploy multiple instances in multiple availability zones, we've created an autoscaling group resource on Terraform, and configured it so that there is always 3 App instances running if one was to go down. This is to have the app architecture as a "Highly Available" application.
 
+For the App, you will need to make sure that you are using the correct Node ami_id, which is
 
->>>>>>> cf41aac9ed34ebb590b62514985020cf4f929954
 
 ## <a name="elk-stack">ELK STACK</a>
 Immutable architectures are notoriously difficult to debug because we no longer have access to the instances and thus do not have access to the logs for those machines.
