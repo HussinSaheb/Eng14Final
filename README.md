@@ -172,6 +172,12 @@ The Architecture should be a "Highly Available" application. Meaning that it has
 The application should connect to a single database instance.
 
 #### Deployment
+<<<<<<< HEAD
+=======
+For the deployment of the app minstances to multiple availability zones, all the configurations are done through terraform.
+
+
+>>>>>>> cf41aac9ed34ebb590b62514985020cf4f929954
 
 ## <a name="elk-stack">ELK STACK</a>
 Immutable architectures are notoriously difficult to debug because we no longer have access to the instances and thus do not have access to the logs for those machines.
