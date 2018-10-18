@@ -88,37 +88,28 @@ We currently only run a single instance in a single availability zone. If this w
 Investigate how to create a replica set using mongo that allows three machines to replicate data and balance the load across three availability zones.
 
 ### <a name="how-it-works">how it works</a>
+![Replica-set diagram](Images/replicaset-db.svg)
+Everything that is being written onto the primary set will get recored into the oplog. Then the secondary members will replicate this log and apply all operations into their data sets as it is not possible to write onto them directly; the secondaries can only be given a read access. If the primary set goes down, the replica sets will use "elections"  to determine the next primary set. We can configure it and set a timeout condition for the primary set. If it exceeds the configured timeout, then it will trigger something called a "failover process". One of the secondaries with the highest 'priority' (a number that will indicate which set is more eligible to become the next primary) available will call for an "election" to select a new primary.
+And we can change the hostname of a replica member without changing the configuration, so when a new primary is elected, the unique hostname given to that set becomes the new primary. And we can maybe setup an autoscaling so that there's always 3 sets of MongoDB. An arbiter can also be set up to auto replace the failed primary set when a new primary get selected, and when the autoscaling spin up a new duplicate, the arbiter will get pushed back and replaced by that.
+
+#### Deployment
+
 To deploy a replica-set, we need to make sure that mongo is installed and mongod service is running. So we made a mongo cookbook that would allowed us to create an AMI with packer to make sure that all DB instances have the two requirements to deploy a replica-set.
 
 Here is the link to our mongo cookbook:
 https://github.com/RCollettSG/ChefMongoCookbook
 
-
-Once everything is correctly setup, run:  
-```
-terraform init
-```
-
-This is to initialise a working directory containing our Terraform configuration files.
-
-If terraform is initialised correctly, run:
-```
-terraform plan
-```
-This is to create an execution plan for you to see if everything in your terraform files meet all the requirements.
-
-If all requirements are met, run:
-```
-terraform apply
-```
-
 When terraform apply is executed successfully, go on AWS, get the public IP address from your App instance and make a request to '/posts'.
 
 You should be able to see the posts page of the web application.
 
-Now, to check if the replica-set is deployed correctly and is working, go on AWS and terminate the Primary DB instance. When reloading the posts page, you should still be able to see all the posts page.
+To check if the replica-set is deployed correctly and is working, go on AWS and terminate the Primary DB instance. When reloading the posts page, you should still be able to see all the posts page.
 
-This is because when the Primary goes down, the other two Secondary members will undergo an 'election'. The member with a healthier state will get elected as the new Primary.
+This is because when the Primary goes down, the other two Secondary members will undergo an 'election'. The member with the healthiest state will get elected as the new Primary.
+
+Replica-set will always make sure that there is one Primary and two Secondary members within the set.
+
+![Replica-set diagram](Images/replicaset-electrion.svg)
 
 #### <a name="manual-replica">To deploy the replica-set manually</a>
 
@@ -232,13 +223,11 @@ The application should connect to a single database instance.
 ####  <a name="deployment">Deployment</a>
 To deploy multiple instances in multiple availability zones, we've created an autoscaling group resource on Terraform, and configured it so that there is always 3 App instances running if one was to go down. This is to have the app architecture as a "Highly Available" application.
 
-For the App, you will need to make sure that you are using the correct Node ami_id, which is **ami-04daf51b01dbbf693**.
+For the App, you will need to use our node cookbook: https://github.com/RCollettSG/ChefNodeCookbook.
 
-For the autoscaling to spin up instances across three different availability zones, we have created three subnets, three route tables and three route table associations, one for each of them. This is so that when the instances are spun up, they will have its own subnets for different availability zones.
+For the autoscaling to spin up instances across three different availability zones. We have created three subnets, three route tables and three route table associations, one for each of them. This is so that when the instances are spun up, they will have its own subnets for different availability zones.
 
-If the main availability zone was to fail, our App within the zone will also fail. With the other two zones being available, our app will be able to stay online. And because we have the autoscaling group configured to always have 3 instances running, another app instance will get deployed and replaced the one that has failed.
-
-
+We also have a load balancer setup to redirect traffic to the remaining online app servers. If the main availability zone was to fail, our App within the zone will also fail. With the other two zones being available, our app will be able to stay online. And because we have the autoscaling group configured to always have 3 instances running, another app instance will get deployed and replaced the one that has failed.
 
 ---
 
