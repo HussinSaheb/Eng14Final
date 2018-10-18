@@ -4,7 +4,7 @@
 We have created a 2-tier architecture which contains 3 Mongodb instances and 3 Node App instances. The architecture is placed within 3 availability zones in AWS, each containing a database instance and an app instance. Each instance is provisioned through cookbooks created in Chef, which are tested through both unit tests and integration tests. We have also created 3 cookbooks to provision an ELK stack, each for the Elasticsearch, Logstack, Kibana. The ELK stack is used to help manage, monitor and analyse logs within the architecture. This would be useful for debugging the architecture, recording any errors made within it. For the database, we have made one of the three instances the primary database, which will take on all the database requests made by the app instances. The other database instances are made into secondaries, which will be used replicate the primary at all times and will replace the primary once the current primary has been corrupted.
 ___
 
-## <a name="mongo-replica-set"> Mongo Replica-Set </a>
+## Mongo Replica-set
 Our 2 tier architecture currently has a serious Single Point of Failure; the database tier.
 We currently only run a single instance in a single availability zone. If this were to fail we would not only have down time but we would also have a serious loss of data.
 Investigate how to create a replica set using mongo that allows three machines to replicate data and balance the load across three availability zones.
@@ -91,8 +91,6 @@ net:
   bindIp: 0.0.0.0
 ```
 Port 27017 is the default port for MongoDB, and since we will be using several hosts which will ensure that MongoDB will listen for connections from applications on your configured addresses.
-
-
 
 Inside, you should be able to ssh into the mongo shell with the following command:
 ```
