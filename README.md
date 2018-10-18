@@ -1,18 +1,23 @@
 # Eng14Final
 # Contents
 
-* [ What we have created. ](#what-we-created)
-* [ Mongo Replica-set. ](#mongo-replica-set)
+1. [ Database. ](#database)
+        * [ Solution 1: Load Balancer. ](#solution-1)
+        * [ Solution 2: EIP. ](#solution-2)
+        * [ Solution 3: ](#solution-3)
+        * [ Final Solution: ](#final-solution)
     1. [ How it works. ](#how-it-works)
         * [ To deploy the replica-set manually. ](#manual-replica)
 * [ Diagrams. ](#diagrams)
-* [ Multi AZ Project. ](#multi-az-app)
-* [ ELK Stack. ](#elk-stack)
 
 ---
 
 ## <a name="what-we-created"> What we have created?</a>
 We have created a 2-tier architecture which contains 3 Mongodb instances and 3 Node App instances. The architecture is placed within 3 availability zones in AWS, each containing a database instance and an app instance. Each instance is provisioned through cookbooks created in Chef, which are tested through both unit tests and integration tests. We have also created 3 cookbooks to provision an ELK stack, each for the Elasticsearch, Logstack, Kibana. The ELK stack is used to help manage, monitor and analyse logs within the architecture. This would be useful for debugging the architecture, recording any errors made within it. For the database, we have made one of the three instances the primary database, which will take on all the database requests made by the app instances. The other database instances are made into secondaries, which will be used replicate the primary at all times and will replace the primary once the current primary has been corrupted.
+
+#### <a name="solution-2"> Solution 2: EIP</a>
+Our second approach was to add an EIP to our instance, but there was an issue where we couldn't get the instance ID because the database instances were made with an autoscaler. The way we added associated the EIP with the instance is by adding a nat gateway inside the public subnet which shadows the databases private subnet. This way was easier to assign IP's in the user data, as we can directly access the EIP.
+ When connecting to the database through the app we encountered the same problem we had with solution 1. we were received a 502 bad gateway error. The cause of this was the fact that the EIP wasn't the right one to allow connection to the database.
 
 ##  <a name="mongo-replica-set">Mongo Replica-set</a>
 
