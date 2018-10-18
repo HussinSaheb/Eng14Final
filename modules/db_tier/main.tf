@@ -66,6 +66,13 @@ resource "aws_security_group" "db" {
     security_groups = ["${var.app_sg}"]
   }
 
+  ingress {
+    from_port = "1025"
+    to_port = "65535"
+    protocol = "tcp"
+    cidr_blocks = ["10.1.0.0/16"]
+  }
+
   egress {
     from_port = 0
     to_port = 0
@@ -91,12 +98,21 @@ resource "aws_network_acl" "db" {
     to_port = 27017
   }
 
+  ingress {
+    protocol = "tcp"
+    rule_no = 110
+    action = "allow"
+    cidr_block = "10.1.0.0/16"
+    from_port = 1024
+    to_port = 65535
+  }
+
   #Empheral ports
   egress {
     protocol = "tcp"
     rule_no = 120
     action = "allow"
-    cidr_block = "${var.app_subnet_cidr_block}"
+    cidr_block = "10.1.0.0/16"
     from_port = 1024
     to_port = 65535
   }
