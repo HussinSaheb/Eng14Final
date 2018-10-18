@@ -22,6 +22,10 @@ variable "region3" {
   default = "eu-west-1c"
 }
 
+variable "ig_id" {
+  description = "internet gateway"
+}
+
 # variable "user_data" {
 #   description = "the user data for db"
 # }
