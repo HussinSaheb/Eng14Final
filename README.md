@@ -3,6 +3,9 @@
 
 * [ What we have created. ](#what-we-created)
 * [ Mongo Replica-set. ](#mongo-replica-set)
+    1. [ Database. ](#database)
+        * [ Solution 1: Load Balancer. ](#solution-1)
+        * [ Solution 2: EIP. ](#solution-2)
     1. [ How it works. ](#how-it-works)
         * [ To deploy the replica-set manually. ](#manual-replica)
 * [ Diagrams. ](#diagrams)
@@ -20,7 +23,20 @@ Our 2 tier architecture currently has a serious Single Point of Failure; the dat
 We currently only run a single instance in a single availability zone. If this were to fail we would not only have down time but we would also have a serious loss of data.
 Investigate how to create a replica set using mongo that allows three machines to replicate data and balance the load across three availability zones.
 
-### <a name="how-it-works">how it works</a>
+### <a name="database"> Database </a>
+Initially we has one database inside an availability zone which made it prone to crashes which in turn would create down time for the database. To resolve this issue we had an EC2 instance inside all of the availability zones (eu-west-1a, eu-west-1b and eu-west-1c) that can automatically recover from a database failure. For example, if you are running a database in eu-west-1a and that database goes down the app would use another database inside the other 2 availability zones until the crashed database is booted up again.
+
+When creating the database to be autoscaled, we came across four solutions which would make the app connect to the database, but those solutions didn't work well as they were always giving us a bad gateway error message. These solutions are:
+
+#### <a name="solution-1"> Solution 1: Load Balancer</a>
+Our first approach was to create a Load Balancer to get the IP of the primary database instance, as the autoscaled database instance didn't have an instance ID. This was an issue because without the instance ID we couldn't get the private IP of said database instance into the user data of the app. The way we got the IP of the primary database was using the Load Balancers DNS, but monogodb only accept ip's as a valid input. To get the DNS' IP we used this command in the user data file:
+```
+nslookup [DNS link] | grep -i address:- | tail -1 | cut -c 10-
+```
+This command filtered the output we got from the nslookup to only display the IP. The IP was added to the db_host, but after trying out the APP to see if it could connect to the database, we received a 502 bad gateway error. The cause of this was the fact that the DNS ip of the load balancer wasn't the right one to allow connection to the database.
+
+
+### <a name="how-it-works">How it works</a>
 To deploy a replica-set, we need to make sure that mongo is installed and mongod service is running. So we made a mongo cookbook that would allowed us to create an AMI with packer to make sure that all DB instances have the two requirements to deploy a replica-set.
 
 If using our mongo cookbook, you need to make sure that in your terraform file, you are using our mongo ami_id, which is **ami-0c388e9d21eea5bd5**.
