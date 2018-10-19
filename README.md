@@ -218,7 +218,7 @@ To deploy multiple instances in multiple availability zones, we've created an au
 
 For the App, you will need to use our node cookbook: https://github.com/RCollettSG/ChefNodeCookbook.
 
-For the autoscaling to spin up instances across three different availability zones. We have created three subnets, three route tables and three route table associations, one for each of them. This is so that when the instances are spun up, they will have its own subnets for different availability zones.
+For the autoscaling to spin up instances across three different availability zones. We have created three subnets, three route tables, and three route table associations, one for each of them. This is so that when the instances are spun up, they will have its own subnets for different availability zones.
 
 We also have a load balancer setup to redirect traffic to the remaining online app servers. If the main availability zone was to fail, our App within the zone will also fail. With the other two zones being available, our app will be able to stay online. And because we have the autoscaling group configured to always have 3 instances running, another app instance will get deployed and replaced the one that has failed.
 
@@ -250,11 +250,11 @@ Bellow is the diagram of our ELK stack architecture:
 
 FileBeat and MetricBeat have been installed on the Node App and Mongodb AWS instances, in order to monitor all machines.
 
-Logstash, Elasticsearch and Kibana have been installed on three separate AWS instances to store, manipulate and display log data for the user.
+Logstash, Elasticsearch, and Kibana have been installed on three separate AWS instances to store, manipulate and display log data for the user.
 
-Filebeat sends logs from the Node App and Mongodb instances to Logstash. MetricBeat sends system metrics from those instances to Logstash as well. The type of logs that Filebeat sends can be set by user, by setting log file pathways in the Filebeat configuration file.
+Filebeat sends logs from the Node App and Mongodb instances to Logstash. MetricBeat sends system metrics from those instances to Logstash as well. The type of logs that Filebeat sends can be set by the user, by setting log file pathways in the Filebeat configuration file.
 
-Logstash identifies named fields from the logs it receieves, such as the log id or log time, and sends this data to Elasticsearch. Elasticsearch then packages the data into a JSON format and sends it to Kibana. Kibana then displays the information received from Elasticsearch as charts and graphs. The user can filter the logs on Kibana to display particular data, such as all metric data for a single database instance for example.
+Logstash identifies named fields from the logs it recieves, such as the log id or log time, and sends this data to Elasticsearch. Elasticsearch then packages the data into a JSON format and sends it to Kibana. Kibana then displays the information received from Elasticsearch as charts and graphs. The user can filter the logs on Kibana to display particular data, such as all metric data for a single database instance for example.
 
 ## Setting Up The ELK Stack
 
