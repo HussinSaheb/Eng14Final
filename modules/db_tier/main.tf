@@ -6,7 +6,7 @@ resource "aws_route_table" "db" {
 }
 #DB
 resource "aws_instance" "Eng14DB1" {
-  ami = "ami-0ed6a646933c4a4bc"
+  ami = "ami-09633d8dbaabb2df5"
   subnet_id = "${aws_subnet.db1.id}"
   security_groups = ["${aws_security_group.db.id}"]
   instance_type = "t2.micro"
@@ -19,7 +19,7 @@ resource "aws_instance" "Eng14DB1" {
 
 }
 resource "aws_instance" "Eng14DB2" {
-  ami = "ami-0ed6a646933c4a4bc"
+  ami = "ami-09633d8dbaabb2df5"
   subnet_id = "${aws_subnet.db2.id}"
   security_groups = ["${aws_security_group.db.id}"]
   instance_type = "t2.micro"
@@ -30,7 +30,7 @@ resource "aws_instance" "Eng14DB2" {
   }
 }
 resource "aws_instance" "Eng14DB3" {
-  ami = "ami-0ed6a646933c4a4bc"
+  ami = "ami-09633d8dbaabb2df5"
   subnet_id = "${aws_subnet.db3.id}"
   security_groups = ["${aws_security_group.db.id}"]
   instance_type = "t2.micro"
@@ -100,7 +100,7 @@ resource "aws_security_group" "db" {
   }
 
   ingress {
-    from_port = "1025"
+    from_port = "1024"
     to_port = "65535"
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
@@ -129,6 +129,15 @@ resource "aws_network_acl" "db" {
     cidr_block = "0.0.0.0/0"
     from_port = 27017
     to_port = 27017
+  }
+
+  ingress {
+    protocol = "tcp"
+    rule_no = 110
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = 1024
+    to_port = 65535
   }
 
   #Empheral ports
