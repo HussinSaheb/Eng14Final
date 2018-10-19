@@ -15,7 +15,7 @@ variable "ami_id" {
 }
 
 variable "availability_zone" {
-  default = "eu-west-3a, eu-west-3b, eu-west-3c"
+  default = "eu-west-1a, eu-west-1b, eu-west-1c"
 }
 variable "name" {
   default="Eng14app"

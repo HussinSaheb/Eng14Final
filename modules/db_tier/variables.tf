@@ -11,15 +11,15 @@ variable "name" {
 }
 
 variable "region1" {
-  default = "eu-west-3a"
+  default = "eu-west-1a"
 }
 
 variable "region2" {
-  default = "eu-west-3b"
+  default = "eu-west-1b"
 }
 
 variable "region3" {
-  default = "eu-west-3c"
+  default = "eu-west-1c"
 }
 
 variable "ig_id" {
