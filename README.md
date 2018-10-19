@@ -49,8 +49,11 @@ terraform destroy
 ```
 This command will destroy everything you have created without leaving anything running.
 
-### <a name="database"> Database </a>
-Initially we has one database inside an availability zone which made it prone to crashes which in turn would create down time for the database. To resolve this issue we had an EC2 instance inside all of the availability zones (eu-west-1a, eu-west-1b and eu-west-1c) that can automatically recover from a database failure, you can see the architecture diagram below. For example, if you are running a database in eu-west-1a and that database goes down the app would use another database inside the other 2 availability zones until the crashed database is booted up again.
+---
+
+
+### <a name="mongo-replica-set"> Mongo Replica-Set </a>
+Our 2 tier architecture currently has a serious Single Point of Failure; the database tier. We currently only run a single instance in a single availability zone. If this were to fail we would not only have down time but we would also have a serious loss of data. Investigate how to create a replica set using mongo that allows three machines to replicate data and balance the load across three availability zones (eu-west-1a, eu-west-1b and eu-west-1c).
 
 ### <a name="how-it-works">How it works</a>
 ![Replica-set diagram](Images/replicaset-db.svg)  
@@ -174,7 +177,7 @@ mongod --slave --source <hostname><:<port>> --dbpath /data/slavedb/
 ```
 This command will set the other two members as a slave.
 
-### Solution
+### Solutions
 
 ![Database Replica Set Architecture Diagram](Images/DB_Replica_set.png)
 
