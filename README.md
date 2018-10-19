@@ -51,12 +51,12 @@ This command will destroy everything you have created without leaving anything r
 
 ##  <a name="mongo-replica-set">Mongo Replica-set</a>
 
-Our 2 tier architecture currently has a serious Single Point of Failure; the database tier.
-We currently only run a single instance in a single availability zone. If this were to fail we would not only have down time but we would also have a serious loss of data.
-Investigate how to create a replica set using mongo that allows three machines to replicate data and balance the load across three availability zones.
+When running a single Mongodb instance as part of an architecture, if this instance were to fail, then the result would be both downtime and a serious loss of data.
+
+Using a Mongodb replica-set allows us to create three database instances with consistent data across the three instances, so that if data is input into one database, the other Mongodb instances will be updated with the same information. The load can then be balanced over the three instances, which are made available across three availability zones on AWS.
 
 ### <a name="database"> Database </a>
-Initially we has one database inside an availability zone which made it prone to crashes which in turn would create down time for the database. To resolve this issue we had an EC2 instance inside all of the availability zones (eu-west-1a, eu-west-1b and eu-west-1c) that can automatically recover from a database failure, you can see the architecture diagram bellow. For example, if you are running a database in eu-west-1a and that database goes down the app would use another database inside the other 2 availability zones until the crashed database is booted up again.
+Initially we had one database inside an availability zone which made it prone to crashes which in turn would create down time for the database. To resolve this issue we had an EC2 instance inside all of the availability zones (eu-west-1a, eu-west-1b and eu-west-1c) that can automatically recover from a database failure, you can see the architecture diagram bellow. For example, if you are running a database in eu-west-1a and that database goes down the app would use another database inside the other 2 availability zones until the crashed database is booted up again.
 
 ![Database Replica Set Architecture Diagram](Images/DB_Replica_set.png)
 
@@ -81,18 +81,12 @@ When connecting to the database through the app we encountered the same problem 
 #### <a name="final-solution"> Final Solution: </a>
 
 
-##  <a name="mongo-replica-set">Mongo Replica-set</a>
-
-Our 2 tier architecture currently has a serious Single Point of Failure; the database tier.
-We currently only run a single instance in a single availability zone. If this were to fail we would not only have down time but we would also have a serious loss of data.
-Investigate how to create a replica set using mongo that allows three machines to replicate data and balance the load across three availability zones.
-
 ### <a name="how-it-works">how it works</a>
 ![Replica-set diagram](Images/replicaset-db.svg)
 Everything that is being written onto the primary set will get recored into the oplog. Then the secondary members will replicate this log and apply all operations into their data sets as it is not possible to write onto them directly; the secondaries can only be given a read access. If the primary set goes down, the replica sets will use "elections"  to determine the next primary set. We can configure it and set a timeout condition for the primary set. If it exceeds the configured timeout, then it will trigger something called a "failover process". One of the secondaries with the highest 'priority' (a number that will indicate which set is more eligible to become the next primary) available will call for an "election" to select a new primary.
 And we can change the hostname of a replica member without changing the configuration, so when a new primary is elected, the unique hostname given to that set becomes the new primary. And we can maybe setup an autoscaling so that there's always 3 sets of MongoDB. An arbiter can also be set up to auto replace the failed primary set when a new primary get selected, and when the autoscaling spin up a new duplicate, the arbiter will get pushed back and replaced by that.
 
-#### Deployment
+#### <a name="deployment">Deployment</a>
 
 To deploy a replica-set, we need to make sure that mongo is installed and mongod service is running. So we made a mongo cookbook that would allowed us to create an AMI with packer to make sure that all DB instances have the two requirements to deploy a replica-set.
 
@@ -215,12 +209,12 @@ This command will set the other two members as a slave.
 
 -----
 
-##  <a name="multi-az-app">Multi AZ Project</a>
-Using Terraform and AWS create a load balanced and autoscaled 2 tier architecture for the node example application.
-The Architecture should be a "Highly Available" application. Meaning that it has redundancies across all three availability zones.
-The application should connect to a single database instance.
+##  <a name="multi-az-app">Multi Availability Zone Project</a>
+
+Using Terraform and AWS we have created a load-balanced, auto-scaled, two-tier architecture, made "highly available" by having redundancies across all three availability zones on AWS.
 
 ####  <a name="deployment">Deployment</a>
+
 To deploy multiple instances in multiple availability zones, we've created an autoscaling group resource on Terraform, and configured it so that there is always 3 App instances running if one was to go down. This is to have the app architecture as a "Highly Available" application.
 
 For the App, you will need to use our node cookbook: https://github.com/RCollettSG/ChefNodeCookbook.
@@ -232,10 +226,8 @@ We also have a load balancer setup to redirect traffic to the remaining online a
 ---
 
 ## <a name="elk-stack">ELK STACK</a>
-Immutable architectures are notoriously difficult to debug because we no longer have access to the instances and thus do not have access to the logs for those machines.
-Log consolidation allows us to have logs files broadcast to a central repository by the instances themselves which allows us to more easily view them.
-The ELK stack is a commonly used system for this purpose.
-Research the setup of the elk stack and create a cookbook for provisioning the required machines.
+
+Immutable architectures are notoriously difficult to debug because we no longer have access to the instances and therefore do not have access to the logs for those machines. Log consolidation allows us to have logs files broadcast to a central repository by the instances themselves which allows us to more easily view them. We have used the ELK stack sytem to monitor our architecture.
 
 ## <a name="what-is-elk">What Is The ELK Stack?</a>
 
@@ -274,4 +266,4 @@ Elasticsearch:  https://github.com/Mhaventhan/ElasticsearchCookBook
 Kibana: https://github.com/oceaneLonneux/kibanaCookbook   
 Beats: https://github.com/RCollettSG/BeatsCookbook  
 
-Each Cookbook contains a README explaining installation.
+Each Cookbook contains a README explaining how to run the tests.
