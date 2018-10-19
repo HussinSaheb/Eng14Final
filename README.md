@@ -54,7 +54,10 @@ Initially we has one database inside an availability zone which made it prone to
 
 ### <a name="how-it-works">How it works</a>
 ![Replica-set diagram](Images/replicaset-db.svg)  
+
 Everything that is being written onto the primary set will get recored into the oplog. Then the secondary members will replicate this log and apply all operations into their data sets as it is not possible to write onto them directly; the secondaries can only be given a read access. If the primary set goes down, the replica sets will use "elections"  to determine the next primary set. We can configure it and set a timeout condition for the primary set. If it exceeds the configured timeout, then it will trigger something called a "failover process". One of the secondaries with the highest 'priority' (a number that will indicate which set is more eligible to become the next primary) available will call for an "election" to select a new primary.
+
+![Replica-set diagram](Images/replicaset-electrion.svg)
 
 #### Deployment
 
@@ -68,8 +71,6 @@ When terraform apply is executed successfully, go on AWS, get the public IP addr
 You should be able to see the posts page of the web application.
 
 To check if the replica-set is deployed correctly and is working, go on AWS and terminate the Primary DB instance. When reloading the posts page, you should still be able to see all the posts page.
-
-![Replica-set diagram](Images/replicaset-electrion.svg)
 
 #### <a name="manual-replica">To deploy the replica-set manually</a>
 
