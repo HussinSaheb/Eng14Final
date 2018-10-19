@@ -51,14 +51,15 @@ This command will destroy everything you have created without leaving anything r
 
 ---
 
-
 ### <a name="mongo-replica-set"> Mongo Replica-Set </a>
 Our 2 tier architecture currently has a serious Single Point of Failure; the database tier. We currently only run a single instance in a single availability zone. If this were to fail we would not only have down time but we would also have a serious loss of data. Investigate how to create a replica set using mongo that allows three machines to replicate data and balance the load across three availability zones (eu-west-1a, eu-west-1b and eu-west-1c).
 
 ### <a name="how-it-works">How it works</a>
+With the replica-set deployed, we are ensured that our database servers will never go down. There will always be a primary database and two secondaries that are always ready to replaced our primary if it was to fail.
+
 ![Replica-set diagram](Images/replicaset-db.svg)  
 
-Everything that is being written onto the primary set will get recored into the oplog. Then the secondary members will replicate this log and apply all operations into their data sets as it is not possible to write onto them directly; the secondaries can only be given a read access. If the primary set goes down, the replica sets will use "elections"  to determine the next primary set. We can configure it and set a timeout condition for the primary set. If it exceeds the configured timeout, then it will trigger something called a "failover process". One of the secondaries with the highest 'priority' (a number that will indicate which set is more eligible to become the next primary) available will call for an "election" to select a new primary.
+Everything that is being written onto the primary set will get recorded into the oplog. Then the secondary members will replicate this log. If the primary set goes down, the replica sets will undergo an "election"  to determine the next primary member. One of the secondaries with the highest 'priority' (a number that will indicate which set is more eligible to become the next primary) available will become the next primary member.
 
 ![Replica-set diagram](Images/replicaset-electrion.svg)
 
@@ -77,7 +78,7 @@ To check if the replica-set is deployed correctly and is working, go on AWS and 
 
 #### <a name="manual-replica">To deploy the replica-set manually</a>
 
-This is what our mongo cookbook AMI will automatically do for you. Only do the following if you are not using the available AMI.
+This is what our mongo cookbook will automatically do for you. Only do the following if you are not using the available cookbook.
 ```
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
 ```
