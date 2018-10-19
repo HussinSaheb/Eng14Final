@@ -65,16 +65,16 @@ Everything that is being written onto the primary set will get recorded into the
 
 #### Deployment
 
-To deploy a replica-set, we need to make sure that mongo is installed and mongod service is running. So we made a mongo cookbook that would allowed us to create an AMI with packer to make sure that all DB instances have the two requirements to deploy a replica-set.
+To deploy a replica-set, we need to make sure that mongo is installed and mongod service is running. So we made a mongo cookbook that would allow us to create an AMI with packer to make sure that all DB instances have the two requirements to deploy a replica-set.
 
 Here is the link to our mongo cookbook:
 https://github.com/RCollettSG/ChefMongoCookbook
 
-When terraform apply is executed successfully, go on AWS, get the public IP address from your App instance and make a request to '/posts'.
+When ```terraform apply``` is executed successfully, go on AWS, get the public IP address from your App instance and make a request to '/posts'.
 
 You should be able to see the posts page of the web application.
 
-To check if the replica-set is deployed correctly and is working, go on AWS and terminate the Primary DB instance. When reloading the posts page, you should still be able to see all the posts page.
+To check if the replica-set is deployed correctly and is working, go on AWS and terminate the Primary DB instance. When reloading the posts page, you should still be able to see all the posts. It would mean that a secondary member has become a new primary.
 
 #### <a name="manual-replica">To deploy the replica-set manually</a>
 
@@ -163,7 +163,7 @@ Once your Primary DB has successfully been initialised, you can then add the oth
 ```
 rs.add({_id: 1, host: "your second db private IP address:27017"}, {_id: 2, host: "your third db private IP address:27017"})
 ```
-Once the two are added to the replica-set successfully, when you run 'rs.status()', you should now be able to see all three members of the set, one Primary and two Secondaries.
+Once the two are added to the replica-set successfully, when you run ```rs.status()```, you should now be able to see all three members of the set, one Primary and two Secondaries.
 
 To ensure that whatever is written onto the Primary member get replicated to the Secondary members, you need to setup a master-slave relationship for the set.
 Exit the mongo shell.
@@ -178,23 +178,27 @@ mongod --slave --source <hostname><:<port>> --dbpath /data/slavedb/
 ```
 This command will set the other two members as a slave.
 
+Your replica-set is now setup and ready to go.
+
 ### Solutions
+
+When we first deployed the replica-set along with our app, they weren't connecting properly so it was giving us a bad gateway.
 
 ![Database Replica Set Architecture Diagram](Images/DB_Replica_set.png)
 
-When creating the database to be autoscaled, we came across four solutions which would make the app connect to the database, but those solutions didn't work well as they were always giving us a bad gateway error message. These solutions are:
+We came across four solutions which could potentially connect the app to the database. The solutions were:
 
 #### <a name="solution-1"> Solution 1: Load Balancer</a>
-Our first approach was to create a Load Balancer to get the IP of the primary database instance, as the autoscaled database instance didn't have an instance ID. This was an issue because without the instance ID we couldn't get the private IP of said database instance into the user data of the app. The way we got the IP of the primary database was using the Load Balancers DNS, but monogodb only accept ip's as a valid input. To get the DNS' IP we used this command in the user data file:
+Our first approach was to create a Load Balancer to get the IP of the primary database instance, as the autoscaled database instance didn't have an instance ID. This was an issue because without the instance ID we couldn't get the private IP of the said database instance into the user data of the app. The way we got the IP of the primary database was using the Load Balancers DNS, but monogodb only accept IPs as a valid input. To get the DNS' IP we used this command in the user data file:
 ```
 nslookup [DNS link] | grep -i address:- | tail -1 | cut -c 10-
 ```
-This command filtered the output we got from the nslookup to only display the IP. The IP was added to the db_host, but after trying out the APP to see if it could connect to the database, we received a 502 bad gateway error. The cause of this was the fact that the DNS ip of the load balancer wasn't the right one to allow connection to the database.
+This command filtered the output we got from the nslookup to only display the IP. The IP was added to the db_host, but after trying out the APP to see if it could connect to the database, we received a '502 bad gateway error'. The cause of this was the fact that the DNS IP of the load balancer wasn't the right one to allow connection to the database.
 
 #### <a name="solution-2"> Solution 2: EIP</a>
-Our second approach was to add an EIP to our instance, but there was an issue where we couldn't get the instance ID because the database instances were made with an autoscaler. The way we added associated the EIP with the instance is by adding a nat gateway inside the public subnet which shadows the databases private subnet. This way was easier to assign IP's in the user data, as we can directly access the EIP.
+Our second approach was to add an EIP to our instance, but there was an issue where we couldn't get the instance ID because the database instances were made with an autoscaler. The way we added associated the EIP with the instance is by adding a NAT gateway inside the public subnet which shadows the databases private subnet. This way was easier to assign IPs in the user data, as we can directly access the EIP.
 
-When connecting to the database through the app we encountered the same problem we had with solution 1. we were received a 502 bad gateway error. The cause of this was the fact that the EIP wasn't the right one to allow connection to the database.
+When connecting to the database through the app, we encountered the same problem we had with solution 1. we were receiving a 502 bad gateway error. The cause of this was the fact that the EIP wasn't the right one to allow connection to the database.
 
 
 #### <a name="solution-3"> Solution 3: </a>
