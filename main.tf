@@ -7,6 +7,10 @@ provider "aws" {
 # Creating a VPC
 resource "aws_vpc" "Eng14vpc" {
   cidr_block = "10.1.0.0/16"
+  enable_dns_support = true
+  enable_dns_hostnames = true
+
+
   tags {
     Name = "${var.name}-vpc"
   }
@@ -50,27 +54,17 @@ resource "aws_subnet" "elk_stack" {
 }
 
 data "template_file" "app_init" {
-   template = "${file("./scripts/app/setup.sh.tpl")}"
-   vars {
-      db_host="mongodb://eng14db.spartaglobal.education:27017/posts"
-   }
+  template = "${file("./scripts/app/setup.sh.tpl")}"
+  vars {
+    db_host1 = "${module.db.db_host1}"
+    db_host2 = "${module.db.db_host2}"
+    db_host3 = "${module.db.db_host3}"
+  }
 }
 
-module "app" {
-  source = "./modules/app_tier"
-  vpc_id = "${aws_vpc.Eng14vpc.id}"
-  user_data = "${data.template_file.app_init.rendered}"
-  ig_id = "${aws_internet_gateway.app.id}"
-  ami_id = "${var.app_ami}"
-}
+data "template_file" "db_init" {
+  template = "${file("./scripts/db/setup.sh.tpl")}"
 
-#Module for the DB
-module "db" {
-  source = "./modules/db_tier"
-  vpc_id = "${aws_vpc.Eng14vpc.id}"
-  db_ami_id = "${var.db_ami}"
-  app_sg = "${module.app.security_group_id}"
-  app_subnet_cidr_block = "${module.app.subnet_cidr_block}"
 }
 
 module "elasticsearch" {
@@ -101,3 +95,24 @@ module "kibana" {
   ami_id = "${var.kb_ami}"
   es_sg = "${module.elasticsearch.es_sg_id}"
 }
+
+
+module "app" {
+  source = "./modules/app_tier"
+  vpc_id = "${aws_vpc.Eng14vpc.id}"
+  user_data = "${data.template_file.app_init.rendered}"
+  ig_id = "${aws_internet_gateway.app.id}"
+  ami_id = "${var.app_ami}"
+}
+
+#Module for the DB
+module "db" {
+  source = "./modules/db_tier"
+  vpc_id = "${aws_vpc.Eng14vpc.id}"
+  db_ami_id = "${var.db_ami}"
+  app_sg = "${module.app.security_group_id}"
+  app_subnet_cidr_block = "${module.app.subnet_cidr_block}"
+  ig_id = "${aws_internet_gateway.app.id}"
+  user_data = "${data.template_file.db_init.rendered}"
+}
+

@@ -54,7 +54,8 @@ resource "aws_instance" "logstash-app" {
   instance_type = "t2.micro"
   private_ip = "10.1.6.7"
   tags {
-    Name = "Logstash-app-Test"
+
+    Name = "Logstash-app"
   }
 }
 
@@ -65,6 +66,7 @@ resource "aws_instance" "logstash-db" {
   instance_type = "t2.micro"
   private_ip = "10.1.6.4"
   tags {
-    Name = "Logstash-db-Test"
+
+    Name = "Logstash-db"
   }
 }

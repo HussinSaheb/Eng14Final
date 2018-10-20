@@ -1,0 +1,5 @@
+.git
+.terraform
+.terraform.*
+terraform.*
+*.DS_Store
