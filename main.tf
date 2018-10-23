@@ -10,6 +10,7 @@ resource "aws_vpc" "Eng14vpc" {
   enable_dns_support = true
   enable_dns_hostnames = true
 
+
   tags {
     Name = "${var.name}-vpc"
   }
@@ -60,8 +61,10 @@ data "template_file" "app_init" {
     db_host3 = "${module.db.db_host3}"
   }
 }
+
 data "template_file" "db_init" {
   template = "${file("./scripts/db/setup.sh.tpl")}"
+
 }
 
 module "elasticsearch" {
@@ -93,6 +96,7 @@ module "kibana" {
   es_sg = "${module.elasticsearch.es_sg_id}"
 }
 
+
 module "app" {
   source = "./modules/app_tier"
   vpc_id = "${aws_vpc.Eng14vpc.id}"
@@ -111,3 +115,4 @@ module "db" {
   ig_id = "${aws_internet_gateway.app.id}"
   user_data = "${data.template_file.db_init.rendered}"
 }
+
